@@ -1,6 +1,6 @@
 <template>
   <top-bar></top-bar>
-  <face-card></face-card>
+  <face-card :actual-name="person.actualName" :face-url="person.faceUrl"></face-card>
   <user-experiences></user-experiences>
 </template>
 
@@ -15,11 +15,11 @@ export default {
     UserExperiences,
     TopBar,
   },
-  // data() {
-  //   return {
-  //     savedSurveyResults: [],
-  //   };
-  // },
+  data() {
+    return {
+      person: {actualName: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
+    };
+  },
   // methods: {
   //   storeSurvey(surveyData) {
   //     const surveyResult = {
