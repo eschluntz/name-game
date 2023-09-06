@@ -2,7 +2,12 @@
   <section>
     <div class="card">
       <img :src="faceUrl"/>
-      <input v-if="active" type="text" v-model.trim="enteredName" />
+      <input 
+        v-if="active" 
+        type="text" 
+        ref="nameInput" 
+        v-model.trim="enteredName"
+      />
       <div v-else>{{ name }}</div>
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
@@ -62,17 +67,32 @@ export default {
     nextPerson() {
       // ready to load the next person
       this.$emit('next-person', Math.round(10 * this.remainingTime))
-    }
+    },
+    handleTabPress(event) {
+      if (event.keyCode === 9) {
+        // Tab key is pressed
+        
+        if (this.active) {
+          this.skipButton();
+        } else {
+          this.nextPerson();
+        }
+        event.preventDefault();
+      }
+    },
   },
 
   // timer stuff
   mounted() {
     this.intervalId = setInterval(this.timePassing, PERIOD);
+    this.$refs.nameInput.focus();
+    document.addEventListener('keyup', this.handleTabPress);
   },
   beforeUnmount() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
+    document.removeEventListener('keyup', this.handleTabPress);
   }
 };
 </script>
