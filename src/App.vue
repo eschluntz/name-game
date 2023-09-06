@@ -7,8 +7,7 @@
   <div v-else-if="gameState=='play'" >
     <face-card 
       :name="person.name" 
-      :face-url="person.faceUrl" 
-      :key="person.name"
+      :face-url="person.faceUrl"
       @next-person="nextPerson">
     </face-card>
     <the-score 
@@ -66,12 +65,19 @@ export default {
     playGame() {
       this.gameState = "play";
     },
-    nextPerson(score) {
-      this.score += score;
-      this.index += 1;
-      if (this.index >= this.people.length) {
-        this.gameState = "over";
+    nextPerson(win, score) {
+      if (win) {
+        this.score += score;
+        this.index += 1;
+        if (this.index >= this.people.length) {
+          this.gameState = "over";
+        }
+      } else {
+        // put this person back on the end of the array
+        let [item] = this.people.splice(this.index, 1);  // Remove the item
+        this.people.push(item); 
       }
+      
     },
     playAgain() {
       this.index = 0;

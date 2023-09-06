@@ -2,18 +2,17 @@
   <section>
     <div class="card">
       <img :src="faceUrl"/>
+      <div style="height: 1rem;">{{ revealedName }}</div>
       <input 
-        v-if="active" 
         type="text" 
-        ref="nameInput" 
+        ref="nameInput"
         v-model.trim="enteredName"
       />
-      <div v-else>{{ name }}</div>
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
       <button v-if="active" @click="skipButton">Skip (tab)</button>
-      <button v-else @click="nextPerson">Next (tab)</button>
+      <button v-else @click="endGame(false)">Next (tab)</button>
     </div>
   </section>
 </template>
@@ -30,6 +29,7 @@ export default {
       // NOTE: this is all blown out from the parent when new props are passed in
       active: true,
       enteredName: '',
+      revealedName: '',
       remainingTime: GUESSTIME,
       intervalId: null,
     };
@@ -39,7 +39,7 @@ export default {
       if (value.toLowerCase() == this.name.toLowerCase()) {
         this.active = false;
         console.log("correct!");
-        this.nextPerson();
+        this.endGame(true);
       }
     }
   },
@@ -62,11 +62,14 @@ export default {
     },
     skipButton() {
       this.active = false;
+      this.revealedName = this.name;
       this.remainingTime = 0;
     },
-    nextPerson() {
+    endGame(win) {
       // ready to load the next person
-      this.$emit('next-person', Math.round(10 * this.remainingTime))
+      let score = win ? Math.round(10 * this.remainingTime) : 0;
+      this.$emit('next-person', win, score);
+      this.resetGame();
     },
     handleTabPress(event) {
       if (event.keyCode === 9) {
@@ -75,11 +78,18 @@ export default {
         if (this.active) {
           this.skipButton();
         } else {
-          this.nextPerson();
+          this.endGame(false);
         }
         event.preventDefault();
       }
     },
+    resetGame() {
+      this.active = true;
+      this.enteredName = '';
+      this.revealedName = '';
+      this.remainingTime = GUESSTIME;
+      this.$refs.nameInput.focus();
+    }
   },
 
   // timer stuff

@@ -12,7 +12,7 @@
                     <button>YC Partners</button>
                 </td>
                 <td>
-                    <button>Custom</button>
+                    <button>Create your own List</button>
                 </td>
             </tr></table>
     </section>
