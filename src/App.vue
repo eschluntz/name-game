@@ -25,6 +25,16 @@
 </template>
 <script>
 
+function shuffle(array) {
+  // Fisher Yates shuffling inlined to avoid importing another dependency
+  const shuffledArray = array.slice();
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+}
+
 import FaceCard from './components/FaceCard.vue';
 import TopBar from './components/TopBar.vue';
 import TheScore from './components/TheScore.vue';
@@ -44,11 +54,11 @@ export default {
       score: 0,
       index: 0,
       gameState: "start", // start | play | over
-      people: [
+      people: shuffle([
         {name: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
         {name: 'garry tan', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/garry-299b21fb17314be53a7f62264d289d5dd1cb149945b69e69fa43525ed073cb48.png'},
         {name: 'paul buchheit', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulb-1529a048b2cf80e93afa43aacad30ce6adf41f2a9f906a9d6e4a73d937414753.jpg'},
-      ],
+      ]),
       highScores: [
         {name: 'Erik', score: 145},
         {name: 'John', score: 132},
@@ -82,6 +92,7 @@ export default {
     playAgain() {
       this.index = 0;
       this.score = 0;
+      this.people = shuffle(this.people)
       this.gameState = "play";
     },
   }

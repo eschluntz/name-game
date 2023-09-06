@@ -56,8 +56,7 @@ export default {
 
       this.remainingTime -= PERIOD / 1000
       if (this.remainingTime <= 0) {
-        this.remainingTime = 0;
-        this.active = false;
+        this.skipButton();
       }
     },
     skipButton() {
