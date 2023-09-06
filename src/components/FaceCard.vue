@@ -7,6 +7,8 @@
         type="text" 
         ref="nameInput"
         v-model.trim="enteredName"
+        :class="{ 'invalid': textIsRed }"
+        :disabled="!active" 
       />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
@@ -32,6 +34,7 @@ export default {
       revealedName: '',
       remainingTime: GUESSTIME,
       intervalId: null,
+      textIsRed: false,
     };
   },
   watch: {
@@ -70,16 +73,24 @@ export default {
       this.$emit('next-person', win, score);
       this.resetGame();
     },
-    handleTabPress(event) {
-      if (event.keyCode === 9) {
-        // Tab key is pressed
-        
+    handleKeyPress(event) {
+      if (event.keyCode === 9) {  // Tab key
         if (this.active) {
           this.skipButton();
         } else {
           this.endGame(false);
         }
         event.preventDefault();
+      } 
+      else if (event.keyCode === 13) {  // Enter key - turn box red
+        if (this.active) {
+            this.textIsRed = true;
+            console.log("turned red");
+        }
+        event.preventDefault();
+      }
+      else {
+        this.textIsRed = false; // reset box back from red on other key presses
       }
     },
     resetGame() {
@@ -95,13 +106,13 @@ export default {
   mounted() {
     this.intervalId = setInterval(this.timePassing, PERIOD);
     this.$refs.nameInput.focus();
-    document.addEventListener('keyup', this.handleTabPress);
+    document.addEventListener('keyup', this.handleKeyPress);
   },
   beforeUnmount() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    document.removeEventListener('keyup', this.handleTabPress);
+    document.removeEventListener('keyup', this.handleKeyPress);
   }
 };
 </script>
@@ -130,5 +141,9 @@ input[type='text'] {
   width: 100%;
   height: 100%;
   transition: width .2s linear;
+}
+
+.invalid {
+    background-color: #ffaaaa;
 }
 </style>
