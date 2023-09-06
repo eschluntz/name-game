@@ -1,36 +1,84 @@
 <template>
   <top-bar></top-bar>
-  <face-card :actual-name="person.actualName" :face-url="person.faceUrl"></face-card>
-  <user-experiences></user-experiences>
+  <start-menu 
+    v-if="gameState=='start'" 
+    @play-game="playGame">
+  </start-menu>
+  <div v-else-if="gameState=='play'" >
+    <face-card 
+      :name="person.name" 
+      :face-url="person.faceUrl" 
+      :key="person.name"
+      @next-person="nextPerson">
+    </face-card>
+    <the-score 
+      :score="score" 
+      :index="index" 
+      :total="3">
+    </the-score>
+  </div>
+  <game-over 
+    v-else 
+    @play-again="playAgain" 
+    :score="score" 
+    :highScores="highScores">
+  </game-over>
 </template>
-
 <script>
+
 import FaceCard from './components/FaceCard.vue';
-import UserExperiences from './components/UserExperiences.vue';
 import TopBar from './components/TopBar.vue';
+import TheScore from './components/TheScore.vue';
+import StartMenu from './components/StartMenu.vue';
+import GameOver from './components/GameOver.vue';
 
 export default {
   components: {
     FaceCard,
-    UserExperiences,
     TopBar,
+    TheScore,
+    StartMenu,
+    GameOver,
   },
   data() {
     return {
-      person: {actualName: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
+      score: 0,
+      index: 0,
+      gameState: "start", // start | play | over
+      people: [
+        {name: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
+        {name: 'garry tan', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/garry-299b21fb17314be53a7f62264d289d5dd1cb149945b69e69fa43525ed073cb48.png'},
+        {name: 'paul buchheit', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulb-1529a048b2cf80e93afa43aacad30ce6adf41f2a9f906a9d6e4a73d937414753.jpg'},
+      ],
+      highScores: [
+        {name: 'Erik', score: 145},
+        {name: 'John', score: 132},
+        {name: 'Erik', score: 94},
+      ]
     };
   },
-  // methods: {
-  //   storeSurvey(surveyData) {
-  //     const surveyResult = {
-  //       name: surveyData.userName,
-  //       rating: surveyData.rating,
-  //       id: new Date().toISOString(),
-  //     };
-  //     this.savedSurveyResults.push(surveyResult);
-  //     console.log(surveyResult);
-  //   },
-  // },
+  computed: {
+    person() {
+      return this.people[this.index];
+    }
+  },
+  methods: {
+    playGame() {
+      this.gameState = "play";
+    },
+    nextPerson(score) {
+      this.score += score;
+      this.index += 1;
+      if (this.index >= this.people.length) {
+        this.gameState = "over";
+      }
+    },
+    playAgain() {
+      this.index = 0;
+      this.score = 0;
+      this.gameState = "play";
+    },
+  }
 };
 </script>
 

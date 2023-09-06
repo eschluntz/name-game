@@ -2,16 +2,13 @@
   <section>
     <div class="card">
       <img :src="faceUrl"/>
-      <input v-if="state=='guess'" type="text" id="name" name="name" v-model.trim="enteredName" />
-      <div v-else>{{ actualName }}</div>
+      <input v-if="active" type="text" v-model.trim="enteredName" />
+      <div v-else>{{ name }}</div>
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
-      <button v-if="state=='guess'" @click="skipButton">Skip (tab)</button>
-      <button v-else @click="nextButton">Next (tab)</button>
-      <div>
-        <strong>Score: </strong><span>{{ score }}</span>
-      </div>
+      <button v-if="active" @click="skipButton">Skip (tab)</button>
+      <button v-else @click="nextPerson">Next (tab)</button>
     </div>
   </section>
 </template>
@@ -21,50 +18,54 @@ const PERIOD = 200; // milliseconds between checks
 const GUESSTIME = 10; // seconds to guess
 
 export default {
-  props: ['actualName', 'faceUrl'],
+  props: ['name', 'faceUrl'],
+  emits: ['next-person'],
   data() {
     return {
-      state: 'guess',  // guess, pause
+      // NOTE: this is all blown out from the parent when new props are passed in
+      active: true,
       enteredName: '',
       remainingTime: GUESSTIME,
-      startingTime: GUESSTIME,
       intervalId: null,
-      score: 0,
     };
   },
   watch: {
     enteredName(value) {
-      if (value.toLowerCase() == this.actualName.toLowerCase()) {
-        this.score += Math.round(10 * this.remainingTime);
-        this.state = 'pause';
+      if (value.toLowerCase() == this.name.toLowerCase()) {
+        this.active = false;
         console.log("correct!");
+        this.nextPerson();
       }
     }
   },
   computed: {
     timeBarStyles() {
-      return {width: 100 * this.remainingTime / this.startingTime + '%'}
+      return {width: 100 * this.remainingTime / GUESSTIME + '%'}
     }
   },
   methods: {
     timePassing() { // called by interval timer
-      if (this.state == 'pause') {
+      if (!this.active) {
         return
       }
+
       this.remainingTime -= PERIOD / 1000
-      
-      // run out of time
       if (this.remainingTime <= 0) {
-        this.state = 'pause';
+        this.remainingTime = 0;
+        this.active = false;
       }
     },
     skipButton() {
-      this.state = 'pause';
+      this.active = false;
+      this.remainingTime = 0;
     },
-    nextButton() {
-      this.state = 'guess';
-    },
+    nextPerson() {
+      // ready to load the next person
+      this.$emit('next-person', Math.round(10 * this.remainingTime))
+    }
   },
+
+  // timer stuff
   mounted() {
     this.intervalId = setInterval(this.timePassing, PERIOD);
   },
