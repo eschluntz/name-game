@@ -30,30 +30,55 @@
 </template>
 
 <script>
+import { collection, query, getDocs, orderBy, limit } from "firebase/firestore"
+import db from '../firebase/init.js'
 
 export default {
-  props: ['score', 'highScores'],
+  props: ['score'],
   emits: ['play-again'],
   data() {
     return {
       highScore: 0,
+      highScores: [],
     };
+  },
+  methods: {
+    async loadGlobalHighScores() {
+      console.log("loading high scores");
+      const scoresCollection = collection(db, 'scores');
+      const querySnap = await getDocs(query(scoresCollection, orderBy('score', 'desc'), limit(10)));
+
+      console.log("query returned");
+      let highScores = [];
+      querySnap.forEach((doc) => {
+        highScores.push(doc.data());
+      })
+
+      console.log("done pushing");
+      console.log(highScores);
+      this.highScores = highScores;
+    },
+    loadLocalHighScores() {
+      this.highScore = localStorage.getItem('highScore');
+      if (!this.highScore) {
+        this.highScore = 0;
+      }
+
+      if (this.score > this.highScore) {
+        this.highScore = this.score;
+        localStorage.setItem('highScore', this.score);
+      }
+    }
   },
   computed: {
     isHighScore() {
       return this.score == this.highScore;
     }
-  }, 
+  },
   mounted() {
-    this.highScore = localStorage.getItem('highScore');
-    if (!this.highScore) {
-      this.highScore = 0;
-    }
+    this.loadGlobalHighScores();
+    this.loadLocalHighScores();
 
-    if (this.score > this.highScore) {
-      this.highScore = this.score;
-      localStorage.setItem('highScore', this.score);
-    }
   }
 };
 </script>

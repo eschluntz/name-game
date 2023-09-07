@@ -8,7 +8,7 @@
     <the-score :score="score" :index="index" :total="people.length">
     </the-score>
   </div>
-  <game-over v-else @play-again="playAgain" :score="score" :highScores="highScores">
+  <game-over v-else @play-again="playAgain" :score="score">
   </game-over>
 </template>
 
@@ -46,17 +46,12 @@ export default {
     return {
       score: 0,
       index: 0,
-      gameState: "play", // start | play | over
+      gameState: "over", // start | play | over
       people: shuffle([
         // {name: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
         { name: 'garry tan', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/garry-299b21fb17314be53a7f62264d289d5dd1cb149945b69e69fa43525ed073cb48.png' },
         // {name: 'paul buchheit', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulb-1529a048b2cf80e93afa43aacad30ce6adf41f2a9f906a9d6e4a73d937414753.jpg'},
       ]),
-      highScores: [
-        { name: 'Erik', score: 145 },
-        { name: 'John', score: 132 },
-        { name: 'Erik', score: 94 },
-      ]
     };
   },
   computed: {
