@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      score: 0,
+      score: 33,
       index: 0,
       gameState: "over", // start | play | over
       people: shuffle([

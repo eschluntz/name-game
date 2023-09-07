@@ -20,6 +20,13 @@
         </tbody>
       </table>
       <br>
+      
+      <form v-if="!hasSubmitted">
+        <strong>Name: </strong>
+        <input type="text" v-model.trim="playerName" />
+        <button @click.prevent="submitScore">Submit Score!</button>
+      </form>
+      
       <div><strong>Your Score: </strong><span> {{ score }}</span></div>
       <div><strong>Your High Score: </strong><span> {{ highScore }}</span></div>
       <div v-if="isHighScore">New High Score!!!</div>
@@ -30,7 +37,7 @@
 </template>
 
 <script>
-import { collection, query, getDocs, orderBy, limit } from "firebase/firestore"
+import { collection, query, getDocs, addDoc, orderBy, limit } from "firebase/firestore"
 import db from '../firebase/init.js'
 
 export default {
@@ -40,22 +47,34 @@ export default {
     return {
       highScore: 0,
       highScores: [],
+      playerName: "",
+      hasSubmitted: false,
     };
   },
   methods: {
+    async submitScore() {
+      const scoresCollection = collection(db, 'scores');
+      const dataObj = {
+        name: this.playerName,
+        score: this.score,
+      };
+      const docRef = await addDoc(scoresCollection, dataObj);
+      console.log('Document was created with ID:', docRef.id);
+
+      await this.loadGlobalHighScores();
+
+      this.playerName = "";
+      this.hasSubmitted = true;
+
+    },
     async loadGlobalHighScores() {
-      console.log("loading high scores");
       const scoresCollection = collection(db, 'scores');
       const querySnap = await getDocs(query(scoresCollection, orderBy('score', 'desc'), limit(10)));
 
-      console.log("query returned");
       let highScores = [];
       querySnap.forEach((doc) => {
         highScores.push(doc.data());
       })
-
-      console.log("done pushing");
-      console.log(highScores);
       this.highScores = highScores;
     },
     loadLocalHighScores() {
