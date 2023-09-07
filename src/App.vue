@@ -132,17 +132,18 @@ body {
 
 button {
   font: inherit;
-  border: 1px solid #360032;
-  background-color: #360032;
+  border: 1px solid #3DBCE7;
+  background-color: #3DBCE7;
   color: white;
   padding: 0.5rem 2rem;
   cursor: pointer;
+  border-radius: .3rem;
 }
 
 button:hover,
 button:active {
-  background-color: #5c0556;
-  border-color: #5c0556;
+  background-color: #71dcff;
+  border-color: #71dcff;
 }
 
 div .card {
@@ -151,5 +152,7 @@ div .card {
   padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  background-color: #f1f1f3;
+  text-align: center;
 }
 </style>

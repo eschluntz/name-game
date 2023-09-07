@@ -129,7 +129,7 @@ img {
 }
 
 input[type='text'] {
-  display: block;
+  /* display: block; */
   width: 20rem;
   margin-top: 0.5rem;
 }
@@ -139,12 +139,12 @@ input[type='text'] {
   height: 40px;
   border: 1px solid #575757;
   margin: 1rem 0;
-  background: #fde5e5;
+  background: #004777 ;
 }
 
 .timebar__value {
-  background-color: #00a876;
-  width: 100%;
+  background-color: #3DBCE7;
+  width: 50%;
   height: 100%;
   transition: width .2s linear;
 }

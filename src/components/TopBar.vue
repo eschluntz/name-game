@@ -26,7 +26,7 @@ export default {}
 
 <style scoped>
 section {
-  background-color: bisque;
+  background-color: #004777;
   text-align: center;
   padding-bottom: 1rem;
 }
@@ -37,6 +37,20 @@ table {
 }
 
 .title {
-  font-size: xx-large;
+  color: #F1F1F3;
+  font-size: xxx-large;
+  padding: 1rem;
 }
+
+button {
+  border: 1px solid #3DBCE7;
+  background-color: #3DBCE7;
+  color: #ffffff;
+}
+button:hover,
+button:active {
+  background-color: #71dcff;
+  border-color: #71dcff;
+}
+
 </style>
