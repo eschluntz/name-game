@@ -1,36 +1,29 @@
 <template>
   <top-bar></top-bar>
-  <start-menu 
-    v-if="gameState=='start'" 
-    @play-game="playGame">
+  <start-menu v-if="gameState == 'start'" @play-game="playGame">
   </start-menu>
-  <div v-else-if="gameState=='play'" >
-    <face-card 
-      :name="person.name" 
-      :face-url="person.faceUrl"
-      @next-person="nextPerson">
+  <div v-else-if="gameState == 'play'">
+    <face-card :name="person.name" :face-url="person.faceUrl" @next-person="nextPerson">
     </face-card>
-    <the-score 
-      :score="score" 
-      :index="index" 
-      :total="3">
+    <the-score :score="score" :index="index" :total="people.length">
     </the-score>
   </div>
-  <game-over 
-    v-else 
-    @play-again="playAgain" 
-    :score="score" 
-    :highScores="highScores">
+  <game-over v-else @play-again="playAgain" :score="score" :highScores="highScores">
   </game-over>
 </template>
+
 <script>
+import { collection, addDoc } from "firebase/firestore"
+import { doc, getDoc } from "firebase/firestore"
+import { query, getDocs, orderBy, limit} from "firebase/firestore"
+import db from './firebase/init.js'
 
 function shuffle(array) {
   // Fisher Yates shuffling inlined to avoid importing another dependency
   const shuffledArray = array.slice();
   for (let i = shuffledArray.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    let j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
   }
   return shuffledArray;
 }
@@ -53,16 +46,16 @@ export default {
     return {
       score: 0,
       index: 0,
-      gameState: "start", // start | play | over
+      gameState: "play", // start | play | over
       people: shuffle([
-        {name: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
-        {name: 'garry tan', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/garry-299b21fb17314be53a7f62264d289d5dd1cb149945b69e69fa43525ed073cb48.png'},
+        // {name: 'paul graham', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulg-8ca9fa356bb6e7e3e21078a18d8823a5ea393808ef56be2d7d5e60b83be790af.jpg'},
+        { name: 'garry tan', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/garry-299b21fb17314be53a7f62264d289d5dd1cb149945b69e69fa43525ed073cb48.png' },
         // {name: 'paul buchheit', faceUrl: 'https://www.ycombinator.com/assets/ycdc/people/paulb-1529a048b2cf80e93afa43aacad30ce6adf41f2a9f906a9d6e4a73d937414753.jpg'},
       ]),
       highScores: [
-        {name: 'Erik', score: 145},
-        {name: 'John', score: 132},
-        {name: 'Erik', score: 94},
+        { name: 'Erik', score: 145 },
+        { name: 'John', score: 132 },
+        { name: 'Erik', score: 94 },
       ]
     };
   },
@@ -72,6 +65,39 @@ export default {
     }
   },
   methods: {
+    async testFirebase() {
+      // https://www.koderhq.com/tutorial/vue/firestore-database/
+
+
+      // set
+      const colRef = collection(db, 'scores');
+      const dataObj = {
+        name: 'Erik',
+        score: 25,
+      };
+      console.log("sending firebase")
+      const docRef = await addDoc(colRef, dataObj);
+      console.log('Document was created with ID:', docRef.id);
+
+      // get
+      const docSnap = await getDoc(doc(db, 'scores', '1'))
+      if (docSnap.exists()) {
+        console.log(docSnap.data());
+      }
+
+      // get many
+      // const querySnap = await getDocs(query(colRef, where('score', '>', 18)));
+      const querySnap = await getDocs(query(colRef, orderBy('score', 'desc'), limit(3)));
+      console.log(querySnap.docs);
+      console.log("top 3 scores")
+      querySnap.forEach((doc) => {
+        console.log(doc.data());
+      })
+      
+
+
+
+    },
     playGame() {
       this.gameState = "play";
     },
@@ -85,9 +111,9 @@ export default {
       } else {
         // put this person back on the end of the array
         let [item] = this.people.splice(this.index, 1);  // Remove the item
-        this.people.push(item); 
+        this.people.push(item);
       }
-      
+
     },
     playAgain() {
       this.index = 0;
@@ -134,5 +160,4 @@ div .card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 }
-
 </style>
