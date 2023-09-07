@@ -5,7 +5,7 @@
         <img :src="faceUrl" />
       </div>
       <div style="height: 1rem;">{{ revealedName }}</div>
-      <input type="text" ref="nameInput" v-model.trim="enteredName" :class="{ 'invalid': textIsRed }" />
+      <input type="text" ref="nameInput" v-model.trim="enteredName" :disabled="!active" :class="{ 'invalid': textIsRed }" />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
@@ -68,8 +68,6 @@ export default {
       let score = win ? Math.round(10 * this.remainingTime) : 0;
       this.resetGame();
       this.$emit('next-person', win, score);
-      this.$refs.nameInput.focus();
-      console.log("focus");
     },
     handleKeyPress(event) {
       if (event.keyCode === 9) {  // Tab key
@@ -96,11 +94,13 @@ export default {
       this.enteredName = '';
       this.revealedName = '';
       this.remainingTime = GUESSTIME;
-      this.$refs.nameInput.focus();
+      this.$nextTick(() => {
+        // do this in next Tick to make sure the box has reactivated already
+        this.$refs.nameInput.focus();
+      })
     }
   },
 
-  // timer stuff
   mounted() {
     this.intervalId = setInterval(this.timePassing, PERIOD);
     this.$refs.nameInput.focus();
