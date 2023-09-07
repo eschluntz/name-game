@@ -1,11 +1,11 @@
 <template>
   <section>
-    <div class="card">
+    <div class="card" :class="cardClass">
       <div class="image-container">
         <img :src="faceUrl" />
       </div>
       <div style="height: 1rem;">{{ revealedName }}</div>
-      <input type="text" ref="nameInput" v-model.trim="enteredName" :disabled="!active" :class="{ 'invalid': textIsRed }" />
+      <input type="text" ref="nameInput" v-model.trim="enteredName" :disabled="!active" :class="{ 'invalid': guessIsWrong }" />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
@@ -24,20 +24,20 @@ export default {
   emits: ['next-person'],
   data() {
     return {
-      // NOTE: this is all blown out from the parent when new props are passed in
       active: true,
       enteredName: '',
       revealedName: '',
       remainingTime: GUESSTIME,
       intervalId: null,
-      textIsRed: false,
+      guessIsWrong: false,
+      cardClass: "",
     };
   },
   watch: {
     enteredName(value) {
       if (this.active && value.toLowerCase() == this.name.toLowerCase()) {
         this.active = false;
-        console.log("correct!");
+
         this.endGame(true);
       }
     }
@@ -45,9 +45,15 @@ export default {
   computed: {
     timeBarStyles() {
       return { width: 100 * this.remainingTime / GUESSTIME + '%' }
-    }
+    },
   },
   methods: {
+    flashSuccess() {
+      this.cardClass = "success";
+      setTimeout(() => {
+        this.cardClass = '';
+      }, 150); // Set timeout duration to match the transition duration
+    },
     timePassing() { // called by interval timer
       if (!this.active) {
         return
@@ -66,6 +72,9 @@ export default {
     endGame(win) {
       // ready to load the next person
       let score = win ? Math.round(10 * this.remainingTime) : 0;
+      if (win) {
+        this.flashSuccess();
+      }
       this.resetGame();
       this.$emit('next-person', win, score);
     },
@@ -116,6 +125,11 @@ export default {
 </script>
   
 <style scoped>
+.success {
+  background-color: rgb(138, 255, 144);
+  transition: 'background-color 0.15s ease';
+}
+
 img {
   width: 20rem;
   object-fit: cover;
