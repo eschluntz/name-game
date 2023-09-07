@@ -1,15 +1,11 @@
 <template>
   <section>
     <div class="card">
-      <img :src="faceUrl"/>
+      <div class="image-container">
+        <img :src="faceUrl" />
+      </div>
       <div style="height: 1rem;">{{ revealedName }}</div>
-      <input 
-        type="text" 
-        ref="nameInput"
-        v-model.trim="enteredName"
-        :class="{ 'invalid': textIsRed }"
-        :disabled="!active" 
-      />
+      <input type="text" ref="nameInput" v-model.trim="enteredName" :class="{ 'invalid': textIsRed }" />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
@@ -39,7 +35,7 @@ export default {
   },
   watch: {
     enteredName(value) {
-      if (value.toLowerCase() == this.name.toLowerCase()) {
+      if (this.active && value.toLowerCase() == this.name.toLowerCase()) {
         this.active = false;
         console.log("correct!");
         this.endGame(true);
@@ -48,7 +44,7 @@ export default {
   },
   computed: {
     timeBarStyles() {
-      return {width: 100 * this.remainingTime / GUESSTIME + '%'}
+      return { width: 100 * this.remainingTime / GUESSTIME + '%' }
     }
   },
   methods: {
@@ -70,8 +66,10 @@ export default {
     endGame(win) {
       // ready to load the next person
       let score = win ? Math.round(10 * this.remainingTime) : 0;
-      this.$emit('next-person', win, score);
       this.resetGame();
+      this.$emit('next-person', win, score);
+      this.$refs.nameInput.focus();
+      console.log("focus");
     },
     handleKeyPress(event) {
       if (event.keyCode === 9) {  // Tab key
@@ -81,11 +79,11 @@ export default {
           this.endGame(false);
         }
         event.preventDefault();
-      } 
+      }
       else if (event.keyCode === 13) {  // Enter key - turn box red
         if (this.active) {
-            this.textIsRed = true;
-            console.log("turned red");
+          this.textIsRed = true;
+          console.log("turned red");
         }
         event.preventDefault();
       }
@@ -120,6 +118,14 @@ export default {
 <style scoped>
 img {
   width: 20rem;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+  max-height: 25rem;
 }
 
 input[type='text'] {
@@ -144,6 +150,6 @@ input[type='text'] {
 }
 
 .invalid {
-    background-color: #ffaaaa;
+  background-color: #ffaaaa;
 }
 </style>
