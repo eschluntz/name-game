@@ -2,8 +2,19 @@
   <section>
     <div class="card">
       <h1>Game Over!</h1>
+      <div class="card your-score">
+        <div>
+          <span>Your Score: </span>
+          <strong>{{ score }}</strong>
+        </div>
+        <div>
+          <span>Your Top Score: </span>
+          <strong>{{ highScore }}</strong>
+        </div>
+      </div>
+      <div v-if="isHighScore">New High Score!!!</div>
       <h3>High Scores:</h3>
-      <table>
+      <table class="table">
         <thead>
           <tr>
             <td><strong>Rank</strong></td>
@@ -20,16 +31,13 @@
         </tbody>
       </table>
       <br>
-      
+
       <form v-if="!hasSubmitted">
         <strong>Name: </strong>
         <input type="text" v-model.trim="playerName" />
         <button @click.prevent="submitScore">Submit Score!</button>
       </form>
-      
-      <div><strong>Your Score: </strong><span> {{ score }}</span></div>
-      <div><strong>Your High Score: </strong><span> {{ highScore }}</span></div>
-      <div v-if="isHighScore">New High Score!!!</div>
+
       <br>
       <button @click="$emit('play-again')">Play again</button>
     </div>
@@ -102,4 +110,61 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.your-score {
+  font-size: x-large;
+  background-color: #004777;
+  color: #fff;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.table thead {
+  background-color: #004777;
+  color: white;
+}
+
+.table thead th {
+  padding: 10px;
+  border-bottom: 2px solid #BEBEC2;
+}
+
+.table tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+.table tbody tr:nth-of-type(odd) {
+  background-color: white;
+}
+
+.table tbody tr:nth-of-type(even) {
+  background-color: #F1F1F3;
+}
+
+.table tbody tr:hover {
+  background-color: #3DBCE7;
+  color: white;
+}
+
+.table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #BEBEC2;
+}
+
+.table tfoot {
+  background-color: #004777;
+  color: white;
+}
+
+.table tfoot td {
+  padding: 10px;
+  border-top: 2px solid #BEBEC2;
+}
+
+</style>

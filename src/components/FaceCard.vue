@@ -5,7 +5,7 @@
         <img :src="faceUrl" />
       </div>
       <div style="height: 1rem;">{{ revealedName }}</div>
-      <input type="text" ref="nameInput" v-model.trim="enteredName" :disabled="!active" :class="{ 'invalid': guessIsWrong }" />
+      <input type="text" ref="nameInput" v-model="enteredName" :disabled="!active" />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
@@ -16,7 +16,7 @@
 </template>
   
 <script>
-const PERIOD = 200; // milliseconds between checks
+const UPDATE_PERIOD = 200; // milliseconds between checks
 const GUESSTIME = 10; // seconds to guess
 
 export default {
@@ -29,7 +29,6 @@ export default {
       revealedName: '',
       remainingTime: GUESSTIME,
       intervalId: null,
-      guessIsWrong: false,
       cardClass: "",
     };
   },
@@ -48,18 +47,19 @@ export default {
     },
   },
   methods: {
-    flashSuccess() {
-      this.cardClass = "success";
+    flashCardClass(tempClass) {
+      this.cardClass = tempClass;
       setTimeout(() => {
         this.cardClass = '';
       }, 150); // Set timeout duration to match the transition duration
     },
+
     timePassing() { // called by interval timer
       if (!this.active) {
         return
       }
 
-      this.remainingTime -= PERIOD / 1000
+      this.remainingTime -= UPDATE_PERIOD / 1000
       if (this.remainingTime <= 0) {
         this.skipButton();
       }
@@ -73,7 +73,7 @@ export default {
       // ready to load the next person
       let score = win ? Math.round(10 * this.remainingTime) : 0;
       if (win) {
-        this.flashSuccess();
+        this.flashCardClass("success");
       }
       this.resetGame();
       this.$emit('next-person', win, score);
@@ -89,13 +89,9 @@ export default {
       }
       else if (event.keyCode === 13) {  // Enter key - turn box red
         if (this.active) {
-          this.textIsRed = true;
-          console.log("turned red");
+          this.flashCardClass("fail");
         }
         event.preventDefault();
-      }
-      else {
-        this.textIsRed = false; // reset box back from red on other key presses
       }
     },
     resetGame() {
@@ -111,7 +107,7 @@ export default {
   },
 
   mounted() {
-    this.intervalId = setInterval(this.timePassing, PERIOD);
+    this.intervalId = setInterval(this.timePassing, UPDATE_PERIOD);
     this.$refs.nameInput.focus();
     document.addEventListener('keyup', this.handleKeyPress);
   },
@@ -127,6 +123,11 @@ export default {
 <style scoped>
 .success {
   background-color: rgb(138, 255, 144);
+  transition: 'background-color 0.15s ease';
+}
+
+.fail {
+  background-color: rgb(255, 138, 138);
   transition: 'background-color 0.15s ease';
 }
 
