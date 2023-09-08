@@ -41,16 +41,4 @@ table {
   font-size: xxx-large;
   padding: 1rem;
 }
-
-button {
-  border: 1px solid #3DBCE7;
-  background-color: #3DBCE7;
-  color: #ffffff;
-}
-button:hover,
-button:active {
-  background-color: #71dcff;
-  border-color: #71dcff;
-}
-
 </style>

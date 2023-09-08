@@ -1,10 +1,10 @@
 <template>
   <section>
-    <div class="card" :class="cardClass">
+    <div class="card" :class="flashClass">
       <div class="image-container">
         <img :src="faceUrl" />
       </div>
-      <div style="height: 1rem;">{{ revealedName }}</div>
+      <div style="height: 1rem; padding-top: .2rem;">{{ revealedName }}</div>
       <input type="text" ref="nameInput" v-model="enteredName" :disabled="!active" />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
@@ -26,10 +26,9 @@ export default {
     return {
       active: true,
       enteredName: '',
-      revealedName: '',
       remainingTime: GUESSTIME,
       intervalId: null,
-      cardClass: "",
+      flashClass: "",
     };
   },
   watch: {
@@ -42,15 +41,18 @@ export default {
     }
   },
   computed: {
+    revealedName() {
+      return this.active? "" : this.name;
+    },
     timeBarStyles() {
       return { width: 100 * this.remainingTime / GUESSTIME + '%' }
     },
   },
   methods: {
     flashCardClass(tempClass) {
-      this.cardClass = tempClass;
+      this.flashClass = tempClass;
       setTimeout(() => {
-        this.cardClass = '';
+        this.flashClass = '';
       }, 150); // Set timeout duration to match the transition duration
     },
 
@@ -73,7 +75,7 @@ export default {
       // ready to load the next person
       let score = win ? Math.round(10 * this.remainingTime) : 0;
       if (win) {
-        this.flashCardClass("success");
+        this.flashCardClass("success-flash");
       }
       this.resetGame();
       this.$emit('next-person', win, score);
@@ -89,7 +91,7 @@ export default {
       }
       else if (event.keyCode === 13) {  // Enter key - turn box red
         if (this.active) {
-          this.flashCardClass("fail");
+          this.flashCardClass("fail-flash");
         }
         event.preventDefault();
       }
@@ -121,12 +123,12 @@ export default {
 </script>
   
 <style scoped>
-.success {
+.success-flash {
   background-color: rgb(138, 255, 144);
   transition: 'background-color 0.15s ease';
 }
 
-.fail {
+.fail-flash {
   background-color: rgb(255, 138, 138);
   transition: 'background-color 0.15s ease';
 }
@@ -140,7 +142,7 @@ img {
 .image-container {
   position: relative;
   overflow: hidden;
-  max-height: 25rem;
+  max-height: 20rem;
 }
 
 input[type='text'] {
@@ -162,9 +164,5 @@ input[type='text'] {
   width: 50%;
   height: 100%;
   transition: width .2s linear;
-}
-
-.invalid {
-  background-color: #ffaaaa;
 }
 </style>

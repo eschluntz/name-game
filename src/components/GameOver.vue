@@ -4,16 +4,13 @@
       <h1>Game Over!</h1>
       <div class="card your-score">
         <div>
-          <span>Your Score: </span>
-          <strong>{{ score }}</strong>
+          <span>Your Score: </span><strong>{{ score }}</strong>
         </div>
         <div>
-          <span>Your Top Score: </span>
-          <strong>{{ highScore }}</strong>
+          <span>Your Top Score: </span><strong>{{ highScore }}</strong>
         </div>
       </div>
-      <div v-if="isHighScore">New High Score!!!</div>
-      <h3>High Scores:</h3>
+      <h3>Global High Scores:</h3>
       <table class="table">
         <thead>
           <tr>
@@ -23,23 +20,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, index) in highScores" :key="index">
+          <tr v-for="(row, index) in highScores" :key="index" :class="mySubmissionClass(row.name)">
             <td>#{{ index + 1 }}</td>
             <td>{{ row.name }}</td>
             <td>{{ row.score }}</td>
           </tr>
         </tbody>
       </table>
-      <br>
 
-      <form v-if="!hasSubmitted">
-        <strong>Name: </strong>
-        <input type="text" v-model.trim="playerName" />
-        <button @click.prevent="submitScore">Submit Score!</button>
-      </form>
+      <div v-if="!hasSubmitted">
+        <form>
+          <strong>Name: </strong>
+          <input class="submit-name" type="text" v-model.trim="playerName" />
+          <button @click.prevent="submitScore">Submit Score!</button>
+        </form>
+        <br>
+      </div>
 
-      <br>
-      <button @click="$emit('play-again')">Play again</button>
+      <button class="throbbing-element" @click="$emit('play-again')">Play again</button>
     </div>
   </section>
 </template>
@@ -56,25 +54,30 @@ export default {
       highScore: 0,
       highScores: [],
       playerName: "",
+      submittedPlayerName: "",
       hasSubmitted: false,
     };
   },
   methods: {
+    mySubmissionClass(name) {
+      return name == this.submittedPlayerName ? "my-submission" : "";
+    },
+
     async submitScore() {
       const scoresCollection = collection(db, 'scores');
       const dataObj = {
         name: this.playerName,
         score: this.score,
       };
-      const docRef = await addDoc(scoresCollection, dataObj);
-      console.log('Document was created with ID:', docRef.id);
+      await addDoc(scoresCollection, dataObj);
 
+      // now reload
+      this.submittedPlayerName = this.playerName;
       await this.loadGlobalHighScores();
-
       this.playerName = "";
       this.hasSubmitted = true;
-
     },
+
     async loadGlobalHighScores() {
       const scoresCollection = collection(db, 'scores');
       const querySnap = await getDocs(query(scoresCollection, orderBy('score', 'desc'), limit(10)));
@@ -85,6 +88,7 @@ export default {
       })
       this.highScores = highScores;
     },
+
     loadLocalHighScores() {
       this.highScore = localStorage.getItem('highScore');
       if (!this.highScore) {
@@ -97,11 +101,6 @@ export default {
       }
     }
   },
-  computed: {
-    isHighScore() {
-      return this.score == this.highScore;
-    }
-  },
   mounted() {
     this.loadGlobalHighScores();
     this.loadLocalHighScores();
@@ -111,6 +110,11 @@ export default {
 </script>
 
 <style scoped>
+.submit-name {
+  width: 50%;
+  margin-right: .5rem;
+}
+
 .your-score {
   font-size: x-large;
   background-color: #004777;
@@ -128,11 +132,6 @@ export default {
 .table thead {
   background-color: #004777;
   color: white;
-}
-
-.table thead th {
-  padding: 10px;
-  border-bottom: 2px solid #BEBEC2;
 }
 
 .table tbody tr {
@@ -157,14 +156,8 @@ export default {
   border-bottom: 1px solid #BEBEC2;
 }
 
-.table tfoot {
-  background-color: #004777;
+.my-submission {
+  background-color: #3DBCE7 !important;
   color: white;
 }
-
-.table tfoot td {
-  padding: 10px;
-  border-top: 2px solid #BEBEC2;
-}
-
 </style>
