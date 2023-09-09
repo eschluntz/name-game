@@ -4,13 +4,12 @@
       <div class="image-container">
         <img :src="faceUrl" />
       </div>
-      <div style="height: 1rem; padding-top: .2rem;">{{ revealedName }}</div>
-      <input type="text" ref="nameInput" v-model="enteredName" :disabled="!active" />
+      <input type="text" ref="nameInput" v-model="enteredName" />
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
       <button v-if="active" @click="skipButton">Skip (tab)</button>
-      <button v-else @click="endGame(false)">Next (tab)</button>
+      <button v-else @click="endGame(false)" class="throbbing">Next (tab)</button>
     </div>
   </section>
 </template>
@@ -33,17 +32,13 @@ export default {
   },
   watch: {
     enteredName(value) {
-      if (this.active && value.toLowerCase() == this.name.toLowerCase()) {
+      if (this.active && (value.toLowerCase().trim() == this.name.toLowerCase().trim())) {
         this.active = false;
-
         this.endGame(true);
       }
     }
   },
   computed: {
-    revealedName() {
-      return this.active? "" : this.name;
-    },
     timeBarStyles() {
       return { width: 100 * this.remainingTime / GUESSTIME + '%' }
     },
@@ -68,7 +63,7 @@ export default {
     },
     skipButton() {
       this.active = false;
-      this.revealedName = this.name;
+      this.enteredName = this.name;
       this.remainingTime = 0;
     },
     endGame(win) {
@@ -99,7 +94,6 @@ export default {
     resetGame() {
       this.active = true;
       this.enteredName = '';
-      this.revealedName = '';
       this.remainingTime = GUESSTIME;
       this.$nextTick(() => {
         // do this in next Tick to make sure the box has reactivated already

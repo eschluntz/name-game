@@ -37,7 +37,7 @@
         <br>
       </div>
 
-      <button class="throbbing-element" @click="$emit('play-again')">Play again</button>
+      <button class="throbbing" @click="$emit('play-again')">Play again</button>
     </div>
   </section>
 </template>

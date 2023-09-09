@@ -1,5 +1,6 @@
 <template>
   <top-bar></top-bar>
+  <!-- <responsive-bar></responsive-bar> -->
   <start-menu v-if="gameState == 'start'" @start-game="startGame">
   </start-menu>
   <div v-else-if="gameState == 'play'">
@@ -17,6 +18,7 @@ import {shuffle, peopleData} from './util.js'
 
 import FaceCard from './components/FaceCard.vue';
 import TopBar from './components/TopBar.vue';
+// import ResponsiveBar from './components/ResponsiveBar.vue';
 import TheScore from './components/TheScore.vue';
 import StartMenu from './components/StartMenu.vue';
 import GameOver from './components/GameOver.vue';
@@ -25,6 +27,7 @@ export default {
   components: {
     FaceCard,
     TopBar,
+    // ResponsiveBar,
     TheScore,
     StartMenu,
     GameOver,
@@ -123,7 +126,7 @@ button:active {
   }
 }
 
-.throbbing-element {
+.throbbing {
   animation: throb 1s infinite ease-in-out;
 }
 

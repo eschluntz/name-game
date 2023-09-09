@@ -10,10 +10,7 @@
           <button>Top Tech CEOs</button>
         </td>
         <td>
-          <button>YC Partners</button>
-        </td>
-        <td>
-          <button>Create your own List</button>
+          <button>Create Your Own</button>
         </td>
       </tr>
     </table>
