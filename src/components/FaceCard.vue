@@ -8,7 +8,7 @@
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
-      <button v-if="active" @click="skipButton">Skip (tab)</button>
+      <button v-if="active" @click="skipButton">Reveal (tab)</button>
       <button v-else @click="endGame(false)" class="throbbing">Next (tab)</button>
     </div>
   </section>
@@ -19,14 +19,15 @@ const UPDATE_PERIOD = 200; // milliseconds between checks
 const GUESSTIME = 10; // seconds to guess
 
 export default {
-  props: ['name', 'faceUrl'],
+  props: ['name', 'faceUrl', 'initTimeRemaining'],
   emits: ['next-person'],
   data() {
     return {
       active: true,
       enteredName: '',
-      remainingTime: GUESSTIME,
+      remainingTime: this.initTimeRemaining !== undefined ? this.initTimeRemaining : GUESSTIME,
       intervalId: null,
+      timeLeftWhenSkipped: null,
       flashClass: "",
     };
   },
@@ -57,14 +58,13 @@ export default {
       }
 
       this.remainingTime -= UPDATE_PERIOD / 1000
-      if (this.remainingTime <= 0) {
-        this.skipButton();
+      if (this.remainingTime < 0) {
+        this.remainingTime = 0;
       }
     },
     skipButton() {
       this.active = false;
       this.enteredName = this.name;
-      this.remainingTime = 0;
     },
     endGame(win) {
       // ready to load the next person
@@ -72,8 +72,7 @@ export default {
       if (win) {
         this.flashCardClass("success-flash");
       }
-      this.resetGame();
-      this.$emit('next-person', win, score);
+      this.$emit('next-person', win, this.remainingTime, score);
     },
     handleKeyPress(event) {
       if (event.keyCode === 9) {  // Tab key
@@ -91,15 +90,6 @@ export default {
         event.preventDefault();
       }
     },
-    resetGame() {
-      this.active = true;
-      this.enteredName = '';
-      this.remainingTime = GUESSTIME;
-      this.$nextTick(() => {
-        // do this in next Tick to make sure the box has reactivated already
-        this.$refs.nameInput.focus();
-      })
-    }
   },
 
   mounted() {

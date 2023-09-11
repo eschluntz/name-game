@@ -4,7 +4,8 @@
   <start-menu v-if="gameState == 'start'" @start-game="startGame">
   </start-menu>
   <div v-else-if="gameState == 'play'">
-    <face-card :name="person.name" :face-url="person.faceUrl" @next-person="nextPerson">
+    <face-card :name="person.name" :face-url="person.faceUrl" :init-time-remaining="person.timeRemaining"
+      @next-person="nextPerson" :key="roundCountKey">
     </face-card>
     <the-score :score="score" :index="index" :total="people.length">
     </the-score>
@@ -14,7 +15,7 @@
 </template>
 
 <script>
-import {shuffle, peopleData} from './util.js'
+import { shuffle, peopleData } from './util.js'
 
 import FaceCard from './components/FaceCard.vue';
 import TopBar from './components/TopBar.vue';
@@ -35,6 +36,7 @@ export default {
     return {
       score: 0,
       index: 0,
+      roundCountKey: 0,
       gameState: "start", // start | play | over
       people: shuffle(peopleData),
     };
@@ -48,16 +50,18 @@ export default {
     startGame() {
       this.gameState = "play";
     },
-    nextPerson(win, score) {
+    nextPerson(win, timeRemaining, score) {
+      this.roundCountKey++; // used to force re-render the game
       if (win) {
         this.score += score;
-        this.index += 1;
+        this.index++;
         if (this.index >= this.people.length) {
           this.gameState = "over";
         }
       } else {
         // put this person back on the end of the array
         let [item] = this.people.splice(this.index, 1);  // Remove the item
+        item.timeRemaining = timeRemaining;
         this.people.push(item);
       }
 
