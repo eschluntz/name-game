@@ -13,22 +13,21 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, index) in highScores" :key="index" :class="mySubmissionClass(row.name)">
+          <tr v-for="(row, index) in highScores" :key="index" >
             <td>#{{ index + 1 }}</td>
-            <td>{{ row.name }}</td>
+            <td v-if="row.toSubmit && !hasSubmitted">
+              <form>
+                <strong>Name: </strong>
+                <input style="width: 10rem" type="text" v-model.trim="playerName" />
+                <button @click.prevent="submitScore">Submit Score!</button>
+              </form>
+            </td>
+            <td v-else-if="row.toSubmit">🎉 {{ playerName }} 🎉</td>
+            <td v-else>{{ row.name }}</td>
             <td>{{ row.score }}</td>
           </tr>
         </tbody>
       </table>
-
-      <div v-if="!hasSubmitted">
-        <form>
-          <strong>Name: </strong>
-          <input class="submit-name" type="text" v-model.trim="playerName" />
-          <button @click.prevent="submitScore">Submit Score!</button>
-        </form>
-        <br>
-      </div>
 
       <button class="throbbing" @click="$emit('play-again')">Play again</button>
     </div>
@@ -47,15 +46,11 @@ export default {
   data() {
     return {
       highScores: [],
-      playerName: "",
-      submittedPlayerName: "",
+      playerName: "Anon",
       hasSubmitted: false,
     };
   },
   methods: {
-    mySubmissionClass(name) {
-      return name == this.submittedPlayerName ? "my-submission" : "";
-    },
     async submitScore() {
       const scoresCollection = collection(db, 'scores');
       const dataObj = {
@@ -64,10 +59,6 @@ export default {
       };
       await addDoc(scoresCollection, dataObj);
 
-      // now reload
-      this.submittedPlayerName = this.playerName;
-      await this.loadGlobalHighScores();
-      this.playerName = "";
       this.hasSubmitted = true;
     },
 
@@ -85,12 +76,9 @@ export default {
     },
 
     insertCurrentScoreIntoHighScoreList() {
-      console.log("in function")
       for (let i = 0; i < this.highScores.length; i++) {
-        console.log("in loop")
         if (this.score > this.highScores[i].score) {
           // insert current score into list here!
-          console.log("inserting local score");
           this.highScores.splice(i, 0, {score: this.score, name: "Anon", toSubmit: true});
           this.highScores.pop();
           break;
@@ -105,18 +93,6 @@ export default {
 </script>
 
 <style scoped>
-.submit-name {
-  width: 50%;
-  margin-right: .5rem;
-}
-
-.your-score {
-  font-size: x-large;
-  background-color: #004777;
-  color: #fff;
-  display: flex;
-  justify-content: space-evenly;
-}
 
 .table {
   width: 100%;
@@ -141,18 +117,8 @@ export default {
   background-color: #F1F1F3;
 }
 
-.table tbody tr:hover {
-  background-color: #3DBCE7;
-  color: white;
-}
-
 .table tbody td {
   padding: 10px;
   border-bottom: 1px solid #BEBEC2;
-}
-
-.my-submission {
-  background-color: #3DBCE7 !important;
-  color: white;
 }
 </style>

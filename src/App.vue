@@ -18,7 +18,6 @@ import {shuffle, peopleData} from './util.js'
 
 import FaceCard from './components/FaceCard.vue';
 import TopBar from './components/TopBar.vue';
-// import ResponsiveBar from './components/ResponsiveBar.vue';
 import TheScore from './components/TheScore.vue';
 import StartMenu from './components/StartMenu.vue';
 import GameOver from './components/GameOver.vue';
@@ -34,9 +33,9 @@ export default {
   },
   data() {
     return {
-      score: 435,
+      score: 0,
       index: 0,
-      gameState: "over", // start | play | over
+      gameState: "start", // start | play | over
       people: shuffle(peopleData),
     };
   },
