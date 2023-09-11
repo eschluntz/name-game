@@ -1,3 +1,5 @@
+#!/bin/bash
+# TODO: fix that this kills any uncommited changes
 git checkout --orphan gh-pages
 npm run build
 git --work-tree dist add --all
