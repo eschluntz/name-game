@@ -2,14 +2,7 @@
   <section>
     <div class="card">
       <h1>Game Over!</h1>
-      <div class="card your-score">
-        <div>
-          <span>Your Score: </span><strong>{{ score }}</strong>
-        </div>
-        <div>
-          <span>Your Top Score: </span><strong>{{ highScore }}</strong>
-        </div>
-      </div>
+      <local-high-score :score="score"></local-high-score>
       <h3>Global High Scores:</h3>
       <table class="table">
         <thead>
@@ -45,13 +38,14 @@
 <script>
 import { collection, query, getDocs, addDoc, orderBy, limit } from "firebase/firestore"
 import db from '../firebase/init.js'
+import LocalHighScore from './LocalHighScore.vue';
 
 export default {
+  components: {LocalHighScore},
   props: ['score'],
   emits: ['play-again'],
   data() {
     return {
-      highScore: 0,
       highScores: [],
       playerName: "",
       submittedPlayerName: "",
@@ -62,7 +56,6 @@ export default {
     mySubmissionClass(name) {
       return name == this.submittedPlayerName ? "my-submission" : "";
     },
-
     async submitScore() {
       const scoresCollection = collection(db, 'scores');
       const dataObj = {
@@ -87,24 +80,26 @@ export default {
         highScores.push(doc.data());
       })
       this.highScores = highScores;
+
+      this.insertCurrentScoreIntoHighScoreList();
     },
 
-    loadLocalHighScores() {
-      this.highScore = localStorage.getItem('highScore');
-      if (!this.highScore) {
-        this.highScore = 0;
+    insertCurrentScoreIntoHighScoreList() {
+      console.log("in function")
+      for (let i = 0; i < this.highScores.length; i++) {
+        console.log("in loop")
+        if (this.score > this.highScores[i].score) {
+          // insert current score into list here!
+          console.log("inserting local score");
+          this.highScores.splice(i, 0, {score: this.score, name: "Anon", toSubmit: true});
+          this.highScores.pop();
+          break;
+        }
       }
-
-      if (this.score > this.highScore) {
-        this.highScore = this.score;
-        localStorage.setItem('highScore', this.score);
-      }
-    }
+    },
   },
-  mounted() {
+  beforeMount() {
     this.loadGlobalHighScores();
-    this.loadLocalHighScores();
-
   }
 };
 </script>

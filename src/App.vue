@@ -34,9 +34,9 @@ export default {
   },
   data() {
     return {
-      score: 0,
+      score: 435,
       index: 0,
-      gameState: "start", // start | play | over
+      gameState: "over", // start | play | over
       people: shuffle(peopleData),
     };
   },
