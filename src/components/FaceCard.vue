@@ -69,10 +69,11 @@ export default {
     endGame(win) {
       // ready to load the next person
       let score = win ? Math.round(10 * this.remainingTime) : 0;
-      if (win) {
-        this.flashCardClass("success-flash");
-      }
-      this.$emit('next-person', win, this.remainingTime, score);
+      let flashClass = win? "success-flash" : "fail-flash"
+      this.flashCardClass(flashClass);
+      setTimeout(() => { // leave time for the success flash
+        this.$emit('next-person', win, this.remainingTime, score);
+      }, 300);
     },
     handleKeyPress(event) {
       if (event.keyCode === 9) {  // Tab key

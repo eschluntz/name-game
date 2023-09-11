@@ -70,7 +70,7 @@ export default {
       this.score = 0;
       this.index = 0;
       this.gameState = "play";
-      this.people = shuffle(this.people)
+      this.people = shuffle(peopleData)
     },
   }
 };
