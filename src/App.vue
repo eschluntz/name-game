@@ -9,13 +9,17 @@
     </face-card>
     <the-score :score="score" :index="index" :total="people.length">
     </the-score>
+    <div class="card">
+      <input type="checkbox" v-model="learningMode"/><span>Learning Mode </span>
+      <em>(Names keep coming up until you get them right)</em>
+    </div>
   </div>
   <game-over v-else @play-again="playAgain" :score="score">
   </game-over>
 </template>
 
 <script>
-import { shuffle, peopleData } from './util.js'
+import { shuffle, deepCopy, peopleData } from './util.js'
 
 import FaceCard from './components/FaceCard.vue';
 import TopBar from './components/TopBar.vue';
@@ -38,7 +42,8 @@ export default {
       index: 0,
       roundCountKey: 0,
       gameState: "start", // start | play | over
-      people: shuffle(peopleData),
+      people: shuffle(deepCopy(peopleData)),
+      learningMode: true,
     };
   },
   computed: {
@@ -52,7 +57,7 @@ export default {
     },
     nextPerson(win, timeRemaining, score) {
       this.roundCountKey++; // used to force re-render the game
-      if (win) {
+      if (!this.learningMode || win) {
         this.score += score;
         this.index++;
         if (this.index >= this.people.length) {
@@ -70,7 +75,7 @@ export default {
       this.score = 0;
       this.index = 0;
       this.gameState = "play";
-      this.people = shuffle(peopleData)
+      this.people = shuffle(deepCopy(peopleData))
     },
   }
 };
