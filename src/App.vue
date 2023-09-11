@@ -1,7 +1,8 @@
 <template>
   <top-bar></top-bar>
   <!-- <responsive-bar></responsive-bar> -->
-  <start-menu v-if="gameState == 'start'" @start-game="startGame">
+  <list-creator v-if="gameState == 'create'"></list-creator>
+  <start-menu v-else-if="gameState == 'start'" @start-game="startGame">
   </start-menu>
   <div v-else-if="gameState == 'play'">
     <face-card :person="person" @next-person="nextPerson" :key="roundCountKey">
@@ -25,6 +26,7 @@ import TopBar from './components/TopBar.vue';
 import TheScore from './components/TheScore.vue';
 import StartMenu from './components/StartMenu.vue';
 import GameOver from './components/GameOver.vue';
+import ListCreator from './components/ListCreator.vue';
 
 export default {
   components: {
@@ -34,6 +36,7 @@ export default {
     TheScore,
     StartMenu,
     GameOver,
+    ListCreator,
   },
   data() {
     return {
