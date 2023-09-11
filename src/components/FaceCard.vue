@@ -2,9 +2,10 @@
   <section>
     <div class="card" :class="flashClass">
       <div class="image-container">
-        <img :src="faceUrl" />
+        <img :src="person.faceUrl" />
       </div>
       <input type="text" ref="nameInput" v-model="enteredName" />
+      <div>{{ revealedAbout }}</div>
       <div class="timebar">
         <div class="timebar__value" :style="timeBarStyles"></div>
       </div>
@@ -19,21 +20,22 @@ const UPDATE_PERIOD = 200; // milliseconds between checks
 const GUESSTIME = 10; // seconds to guess
 
 export default {
-  props: ['name', 'faceUrl', 'initTimeRemaining'],
+  props: ['person'],
   emits: ['next-person'],
   data() {
     return {
       active: true,
       enteredName: '',
-      remainingTime: this.initTimeRemaining !== undefined ? this.initTimeRemaining : GUESSTIME,
+      remainingTime: this.person.timeRemaining !== undefined ? this.person.timeRemaining : GUESSTIME,
       intervalId: null,
       timeLeftWhenSkipped: null,
       flashClass: "",
+      revealedAbout: "",
     };
   },
   watch: {
     enteredName(value) {
-      if (this.active && (value.toLowerCase().trim() == this.name.toLowerCase().trim())) {
+      if (this.active && (value.toLowerCase().trim() == this.person.name.toLowerCase().trim())) {
         this.active = false;
         this.endGame(true);
       }
@@ -64,7 +66,8 @@ export default {
     },
     skipButton() {
       this.active = false;
-      this.enteredName = this.name;
+      this.enteredName = this.person.name;
+      this.revealedAbout = this.person.about;
     },
     endGame(win) {
       // ready to load the next person

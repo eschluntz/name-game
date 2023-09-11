@@ -4,8 +4,7 @@
   <start-menu v-if="gameState == 'start'" @start-game="startGame">
   </start-menu>
   <div v-else-if="gameState == 'play'">
-    <face-card :name="person.name" :face-url="person.faceUrl" :init-time-remaining="person.timeRemaining"
-      @next-person="nextPerson" :key="roundCountKey">
+    <face-card :person="person" @next-person="nextPerson" :key="roundCountKey">
     </face-card>
     <the-score :score="score" :index="index" :total="people.length">
     </the-score>
@@ -43,7 +42,7 @@ export default {
       roundCountKey: 0,
       gameState: "start", // start | play | over
       people: shuffle(deepCopy(peopleData)),
-      learningMode: true,
+      learningMode: false,
     };
   },
   computed: {
