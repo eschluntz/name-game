@@ -4,13 +4,13 @@
     <table>
       <tr>
         <td>
-          <button>Top VCs</button>
+          <router-link to="/game/vcs"><button>Top VCs</button></router-link>
         </td>
         <td>
-          <button>Top Tech CEOs</button>
+          <router-link to="/game/ceos"><button>Top Tech CEOs</button></router-link>
         </td>
         <td>
-          <button>Create Your Own</button>
+          <router-link to="/create/yourList"><button>Create Your Own</button></router-link>
         </td>
       </tr>
     </table>

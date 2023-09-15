@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="card">
-      <h1>Create List</h1>
+      <h1>Create List {{ whichList }}</h1>
       <div>
         <strong>List Title: </strong>
         <input type="text" v-model.trim="listName"/>
@@ -37,6 +37,7 @@
 <script>
 
 export default {
+  props: ['whichList'],
   data() {
     return {
       listName: "my new list",
@@ -63,6 +64,9 @@ export default {
     saveList() {
       console.log("Saved!");
     },
+  },
+  mounted() {
+    console.log("prop: " + this.whichList)
   }
 };
 </script>
