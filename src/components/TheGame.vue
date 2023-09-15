@@ -49,6 +49,12 @@
         return this.people[this.index];
       }
     },
+    watch: {
+      $route() {
+        this.playAgain();
+        this.gameState = "start";
+      }
+    },
     methods: {
       startGame() {
         console.log("which list: " + this.whichList)
@@ -73,6 +79,7 @@
       playAgain() {
         this.score = 0;
         this.index = 0;
+        this.roundCountKey++;
         this.gameState = "play";
         this.people = shuffle(deepCopy(peopleData[this.whichList]))
       },
