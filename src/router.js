@@ -13,6 +13,10 @@ const routes = [
     component: TheGame,
     props: true,
   },
+  {
+    path: '/',
+    redirect: '/game/ceos'
+  },
 ];
 
 const router = createRouter({

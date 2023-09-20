@@ -11,5 +11,5 @@ export default {
     TopBar,
   },
 };
-
+console.log("Hi! Yes you can obviously 'hack' the game by changing your score or hitting firebase directly, but please don't spoil the high score list for everyone :)")
 </script>
