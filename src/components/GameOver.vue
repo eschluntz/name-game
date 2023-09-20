@@ -59,7 +59,7 @@ export default {
       return mapping[this.whichList] || 'Unknown List';
     },
     fireBaseScoreCollection() {
-      return collection(db, 'score-list', this.whichList, 'high-scores')
+      return collection(db, 'scoreList', this.whichList, 'highScores')
     },
   },
   methods: {
