@@ -17,7 +17,7 @@
   
 <script>
 const UPDATE_PERIOD = 200; // milliseconds between checks
-const GUESSTIME = 10; // seconds to guess
+const GUESSTIME = 15; // seconds to guess
 
 export default {
   props: ['person'],

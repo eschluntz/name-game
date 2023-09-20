@@ -3,7 +3,7 @@
     <div class="card">
       <h1>Game Over!</h1>
       <local-high-score :score="score"></local-high-score>
-      <h3>Global High Scores:</h3>
+      <h3> {{listLabel}} Global High Scores:</h3>
       <table class="table">
         <thead>
           <tr>
@@ -41,7 +41,7 @@ import LocalHighScore from './LocalHighScore.vue';
 
 export default {
   components: {LocalHighScore},
-  props: ['score'],
+  props: ['score', 'whichList'],
   emits: ['play-again'],
   data() {
     return {
@@ -50,21 +50,31 @@ export default {
       hasSubmitted: false,
     };
   },
+  computed: {
+    listLabel() {
+      const mapping = {
+        vcs: 'Top VCs',
+        ceos: 'Top CEOs'
+      };
+      return mapping[this.whichList] || 'Unknown List';
+    },
+    fireBaseScoreCollection() {
+      return collection(db, 'score-list', this.whichList, 'high-scores')
+    },
+  },
   methods: {
     async submitScore() {
-      const scoresCollection = collection(db, 'scores');
       const dataObj = {
         name: this.playerName,
         score: this.score,
       };
-      await addDoc(scoresCollection, dataObj);
+      await addDoc(this.fireBaseScoreCollection, dataObj);
 
       this.hasSubmitted = true;
     },
 
     async loadGlobalHighScores() {
-      const scoresCollection = collection(db, 'scores');
-      const querySnap = await getDocs(query(scoresCollection, orderBy('score', 'desc'), limit(10)));
+      const querySnap = await getDocs(query(this.fireBaseScoreCollection, orderBy('score', 'desc'), limit(10)));
 
       let highScores = [];
       querySnap.forEach((doc) => {
@@ -76,13 +86,18 @@ export default {
     },
 
     insertCurrentScoreIntoHighScoreList() {
+      let inserted = false;
       for (let i = 0; i < this.highScores.length; i++) {
         if (this.score > this.highScores[i].score) {
           // insert current score into list here!
           this.highScores.splice(i, 0, {score: this.score, name: "Anon", toSubmit: true});
           this.highScores.pop();
+          inserted = true;
           break;
         }
+      }
+      if (!inserted && this.highScores.length < 10) { // insert at end of list if < 10 entries
+        this.highScores.push({score: this.score, name: "Anon", toSubmit: true});
       }
     },
   },
