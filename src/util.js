@@ -1,4 +1,4 @@
-import { collection, query, getDocs, doc, addDoc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, getDocs, doc, addDoc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import db from './firebase/init.js';
 
 export function shuffle(array) {
@@ -33,14 +33,14 @@ export async function loadListDisplayName(whichList) {
 export async function saveList(whichList, people, displayName) {
   // save displayName
   const docRef = doc(db, 'scoreList', whichList);
-  await updateDoc(docRef, {displayName: displayName});
+  await setDoc(docRef, {displayName: displayName}); // handles creating too
 
   const collectionRef = collection(db, 'scoreList', whichList, 'people');
 
   // Delete existing documents
   const querySnap = await getDocs(query(collectionRef))
   querySnap.docs.forEach(doc => deleteDoc(doc.ref));
-
+  
   // Add new documents
   people.forEach(async (obj) => {
     await addDoc(collectionRef, obj);
