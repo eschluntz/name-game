@@ -57,8 +57,13 @@ export default {
     }
   },
   async mounted() {
-    this.people = await loadPeopleList(this.whichList);
-    this.listDisplayName = await loadListDisplayName(this.whichList);
+    console.log("whichlist: " + this.whichList)
+    if (this.whichList) {
+      this.people = await loadPeopleList(this.whichList);
+      this.listDisplayName = await loadListDisplayName(this.whichList);
+    } else {
+      console.log("Will be creating a new list")
+    }
   }
 };
 </script>

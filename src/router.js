@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import TheGame from '@/components/TheGame.vue'
 import ListCreator from '@/components/ListCreator.vue';
+// import CreateRedirecter from '@/components/CreateRedirecter.vue'
 
 const routes = [
   {
-    path: '/create/:whichList',
+    path: '/create',
+    component: ListCreator,
+  },
+  {
+    path: '/edit/:whichList',
     component: ListCreator,
     props: true,
   },

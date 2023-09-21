@@ -31,9 +31,17 @@ export async function loadListDisplayName(whichList) {
 }
 
 export async function saveList(whichList, people, displayName) {
+  
   // save displayName
-  const docRef = doc(db, 'scoreList', whichList);
-  await setDoc(docRef, {displayName: displayName}); // handles creating too
+  if (whichList) {
+    const docRef = doc(db, 'scoreList', whichList);
+    await setDoc(docRef, {displayName: displayName});
+  } else {
+    // create new document
+    const listCollectionRef = collection(db, 'scoreList');
+    const newDocRef = await addDoc(listCollectionRef, {displayName: displayName});
+    whichList = newDocRef.id;
+  }
 
   const collectionRef = collection(db, 'scoreList', whichList, 'people');
 

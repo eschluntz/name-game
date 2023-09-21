@@ -10,7 +10,7 @@
           <router-link to="/game/ceos">Top Tech CEOs</router-link>
         </td>
         <td>
-          <router-link to="/create/yourList">Create Your Own</router-link>
+          <router-link to="/create">Create Your Own</router-link>
         </td>
       </tr>
     </table>
