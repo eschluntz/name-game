@@ -17,7 +17,9 @@
 </template>
   
 <script>
-import { shuffle, deepCopy, peopleData } from '../util.js'
+import { collection, query, getDocs } from "firebase/firestore"
+import db from '../firebase/init.js'
+import { shuffle, deepCopy } from '../util.js'
 
 import FaceCard from './FaceCard.vue';
 import TheScore from './TheScore.vue';
@@ -39,7 +41,8 @@ export default {
       index: 0,
       roundCountKey: 0,
       gameState: "start", // start | play | over
-      people: shuffle(deepCopy(peopleData[this.whichList])),
+      people: [], // modified during game
+      originalLoadedPeople: [],
       learningMode: false,
     };
   },
@@ -55,9 +58,17 @@ export default {
       this.gameState = "start";
     }
   },
+  async mounted() {
+    this.originalLoadedPeople = await this.loadList();
+    this.people = shuffle(deepCopy(this.originalLoadedPeople))
+  },
   methods: {
+    async loadList() {
+      const col = collection(db, 'scoreList', this.whichList, 'people')
+      const querySnap = await getDocs(query(col));
+      return querySnap.docs.map(doc => { return doc.data() })
+    },
     startGame() {
-      console.log("which list: " + this.whichList)
       this.gameState = "play";
     },
     nextPerson(win, timeRemaining, score) {
@@ -81,7 +92,7 @@ export default {
       this.index = 0;
       this.roundCountKey++;
       this.gameState = "play";
-      this.people = shuffle(deepCopy(peopleData[this.whichList]))
+      this.people = shuffle(deepCopy(this.originalLoadedPeople))
     },
   }
 };

@@ -3,7 +3,7 @@
     <div class="card">
       <h1>Game Over!</h1>
       <local-high-score :score="score"></local-high-score>
-      <h3> {{listLabel}} Global High Scores:</h3>
+      <h3> {{listDisplayName}} Global High Scores:</h3>
       <table class="table">
         <thead>
           <tr>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { collection, query, getDocs, addDoc, orderBy, limit } from "firebase/firestore"
+import { collection, query, getDocs, getDoc, doc, addDoc, orderBy, limit } from "firebase/firestore"
 import db from '../firebase/init.js'
 import LocalHighScore from './LocalHighScore.vue';
 
@@ -48,16 +48,10 @@ export default {
       highScores: [],
       playerName: "Anon",
       hasSubmitted: false,
+      listDisplayName: "",
     };
   },
   computed: {
-    listLabel() {
-      const mapping = {
-        vcs: 'Top VCs',
-        ceos: 'Top CEOs'
-      };
-      return mapping[this.whichList] || 'Unknown List';
-    },
     fireBaseScoreCollection() {
       return collection(db, 'scoreList', this.whichList, 'highScores')
     },
@@ -72,15 +66,14 @@ export default {
 
       this.hasSubmitted = true;
     },
-
+    async loadDisplayName() {
+      const docRef = doc(db, 'scoreList', this.whichList);
+      const docSnap = await getDoc(docRef);
+      this.listDisplayName = docSnap.data().displayName;
+    },
     async loadGlobalHighScores() {
       const querySnap = await getDocs(query(this.fireBaseScoreCollection, orderBy('score', 'desc'), limit(10)));
-
-      let highScores = [];
-      querySnap.forEach((doc) => {
-        highScores.push(doc.data());
-      })
-      this.highScores = highScores;
+      this.highScores = querySnap.docs.map(doc => { return doc.data() })
 
       this.insertCurrentScoreIntoHighScoreList();
     },
@@ -103,6 +96,7 @@ export default {
   },
   beforeMount() {
     this.loadGlobalHighScores();
+    this.loadDisplayName();
   }
 };
 </script>
