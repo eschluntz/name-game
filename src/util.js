@@ -1,3 +1,6 @@
+import { collection, query, getDocs, doc, addDoc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import db from './firebase/init.js';
+
 export function shuffle(array) {
   // Fisher Yates shuffling inlined to avoid importing another dependency
   const shuffledArray = array.slice();
@@ -10,6 +13,38 @@ export function shuffle(array) {
 
 export function deepCopy(originalObj) {
   return JSON.parse(JSON.stringify(originalObj));
+}
+
+export async function loadPeopleList(whichList) {
+  const colRef = collection(db, 'scoreList', whichList, 'people');
+  const querySnap = await getDocs(query(colRef));
+  return querySnap.docs.map((doc) => {
+    return doc.data();
+  });
+}
+
+export async function loadListDisplayName(whichList) {
+  const docRef = doc(db, 'scoreList', whichList);
+  const docSnap = await getDoc(docRef);
+  // return empty string if document doesn't exist yet
+  return docSnap.exists() ? docSnap.data().displayName : '';
+}
+
+export async function saveList(whichList, people, displayName) {
+  // save displayName
+  const docRef = doc(db, 'scoreList', whichList);
+  await updateDoc(docRef, {displayName: displayName});
+
+  const collectionRef = collection(db, 'scoreList', whichList, 'people');
+
+  // Delete existing documents
+  const querySnap = await getDocs(query(collectionRef))
+  querySnap.docs.forEach(doc => deleteDoc(doc.ref));
+
+  // Add new documents
+  people.forEach(async (obj) => {
+    await addDoc(collectionRef, obj);
+  });
 }
 
 // export var peopleData = {

@@ -1,10 +1,10 @@
 <template>
   <section>
     <div class="card">
-      <h1>Create List {{ whichList }}</h1>
+      <h1>Create List</h1>
       <div>
         <strong>List Title: </strong>
-        <input type="text" v-model.trim="listName"/>
+        <input type="text" v-model.trim="listDisplayName"/>
       </div>
       <h3>People:</h3>
       <div v-for="(person, index) in people" :key="index">
@@ -26,77 +26,47 @@
           <img v-if="person.faceUrl" :src="person.faceUrl" />
           <img v-else src="placeholder" />
         </div>
-        <span>---------------------</span>
+        <button @click="removePerson(index)">Remove</button>
+        <div>---------------------</div>
       </div>
       <button @click="addPerson">Add another</button>
-      <button class="throbbing" @click="saveList">Save List</button>
+      <button class="throbbing" @click="saveList(whichList, people, listDisplayName)">Save List</button>
     </div>
   </section>
 </template>
   
 <script>
+import { loadPeopleList, loadListDisplayName, saveList, } from '../util.js'
 
 export default {
   props: ['whichList'],
   data() {
     return {
-      listName: "my new list",
-      people: [
-        {
-          name: 'Jensen Huang',
-          about: 'CEO of Nvidia',
-          faceUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Jensen_Huang_%28cropped%29.jpg/330px-Jensen_Huang_%28cropped%29.jpg',
-        },
-        {
-          name: 'Jeff Bezos',
-          about: 'Former CEO of Amazon',
-          faceUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Jeff_Bezos_visits_LAAFB_SMC_%283908618%29_%28cropped%29.jpeg/330px-Jeff_Bezos_visits_LAAFB_SMC_%283908618%29_%28cropped%29.jpeg',
-        },
-      ]
+      listDisplayName: "",
+      people: []
     };
   },
   methods: {
+    saveList,
     addPerson() {
       this.people.push({name: '', about: '', faceUrl: ''});
     },
-    saveList() {
-      console.log("Saved!");
-    },
+    removePerson(index) {
+      console.log(index)
+      this.people.splice(index, 1)
+    }
   },
-  mounted() {
-    console.log("prop: " + this.whichList)
+  async mounted() {
+    this.people = await loadPeopleList(this.whichList);
+    this.listDisplayName = await loadListDisplayName(this.whichList);
   }
 };
 </script>
   
 <style scoped>
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-}
-
-.table thead {
-  background-color: #004777;
-  color: white;
-}
-
-.table tbody tr {
-  transition: background-color 0.3s ease;
-}
-
-.table tbody tr:nth-of-type(odd) {
-  background-color: white;
-}
-
-.table tbody tr:nth-of-type(even) {
-  background-color: #F1F1F3;
-}
-
-.table tbody td {
-  padding: 10px;
-  border-bottom: 1px solid #BEBEC2;
+.image-container {
+  position: relative;
+  overflow: hidden;
+  max-height: 20rem;
 }
 </style>

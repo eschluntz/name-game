@@ -1,6 +1,5 @@
 <template>
-  <list-creator v-if="gameState == 'create'"></list-creator>
-  <start-menu v-else-if="gameState == 'start'" @start-game="startGame">
+  <start-menu v-if="gameState == 'start'" @start-game="startGame">
   </start-menu>
   <div v-else-if="gameState == 'play'">
     <face-card :person="person" @next-person="nextPerson" :key="roundCountKey">
@@ -17,15 +16,12 @@
 </template>
   
 <script>
-import { collection, query, getDocs } from "firebase/firestore"
-import db from '../firebase/init.js'
-import { shuffle, deepCopy } from '../util.js'
+import { shuffle, deepCopy, loadPeopleList } from '../util.js'
 
 import FaceCard from './FaceCard.vue';
 import TheScore from './TheScore.vue';
 import StartMenu from './StartMenu.vue';
 import GameOver from './GameOver.vue';
-import ListCreator from './ListCreator.vue';
 
 export default {
   components: {
@@ -33,7 +29,6 @@ export default {
     TheScore,
     StartMenu,
     GameOver,
-    ListCreator,
   },
   data() {
     return {
@@ -59,15 +54,10 @@ export default {
     }
   },
   async mounted() {
-    this.originalLoadedPeople = await this.loadList();
+    this.originalLoadedPeople = await loadPeopleList(this.whichList);
     this.people = shuffle(deepCopy(this.originalLoadedPeople))
   },
   methods: {
-    async loadList() {
-      const col = collection(db, 'scoreList', this.whichList, 'people')
-      const querySnap = await getDocs(query(col));
-      return querySnap.docs.map(doc => { return doc.data() })
-    },
     startGame() {
       this.gameState = "play";
     },

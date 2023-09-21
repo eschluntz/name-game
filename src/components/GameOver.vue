@@ -35,9 +35,10 @@
 </template>
 
 <script>
-import { collection, query, getDocs, getDoc, doc, addDoc, orderBy, limit } from "firebase/firestore"
+import { collection, query, getDocs, addDoc, orderBy, limit } from "firebase/firestore"
 import db from '../firebase/init.js'
 import LocalHighScore from './LocalHighScore.vue';
+import { loadListDisplayName} from '../util.js'
 
 export default {
   components: {LocalHighScore},
@@ -66,11 +67,6 @@ export default {
 
       this.hasSubmitted = true;
     },
-    async loadDisplayName() {
-      const docRef = doc(db, 'scoreList', this.whichList);
-      const docSnap = await getDoc(docRef);
-      this.listDisplayName = docSnap.data().displayName;
-    },
     async loadGlobalHighScores() {
       const querySnap = await getDocs(query(this.fireBaseScoreCollection, orderBy('score', 'desc'), limit(10)));
       this.highScores = querySnap.docs.map(doc => { return doc.data() })
@@ -94,9 +90,9 @@ export default {
       }
     },
   },
-  beforeMount() {
+  async mounted() {
     this.loadGlobalHighScores();
-    this.loadDisplayName();
+    this.listDisplayName = await loadListDisplayName(this.whichList);
   }
 };
 </script>
