@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import TheGame from '@/components/TheGame.vue'
-import ListCreator from '@/components/ListCreator.vue';
-// import CreateRedirecter from '@/components/CreateRedirecter.vue'
+import TheGame from '@/components/game/TheGame.vue'
+import ListCreator from '@/components/lists/ListCreator.vue';
 
 const routes = [
   {

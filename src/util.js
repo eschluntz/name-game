@@ -53,6 +53,8 @@ export async function saveList(whichList, people, displayName) {
   people.forEach(async (obj) => {
     await addDoc(collectionRef, obj);
   });
+
+  return whichList;
 }
 
 // export var peopleData = {

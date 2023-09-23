@@ -16,7 +16,7 @@
 </template>
   
 <script>
-import { shuffle, deepCopy, loadPeopleList } from '../util.js'
+import { shuffle, deepCopy, loadPeopleList } from '../../util.js'
 
 import FaceCard from './FaceCard.vue';
 import TheScore from './TheScore.vue';
@@ -119,6 +119,7 @@ button {
   padding: 0.5rem 2rem;
   cursor: pointer;
   border-radius: .3rem;
+  margin-inline: .3rem;
 }
 
 button:hover,

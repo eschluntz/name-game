@@ -36,9 +36,9 @@
 
 <script>
 import { collection, query, getDocs, addDoc, orderBy, limit } from "firebase/firestore"
-import db from '../firebase/init.js'
+import db from '../../firebase/init.js'
 import LocalHighScore from './LocalHighScore.vue';
-import { loadListDisplayName} from '../util.js'
+import { loadListDisplayName} from '../../util.js'
 
 export default {
   components: {LocalHighScore},
