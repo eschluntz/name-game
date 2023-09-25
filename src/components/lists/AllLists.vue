@@ -1,77 +1,77 @@
 <template>
-    <section>
-      <div class="card">
-        <h1>All Lists</h1>
-        <div>
-          <strong>Search: </strong>
-          <input type="text"/>
-        </div>
-  
-        <table>
-        <div v-for="(list, index) in lists" :key="index">
-          <tr>
-              <td>list.displayName</td>
-              <td><button>Play</button></td>
-            </tr>
-        </div>
-        </table>
+  <section>
+    <div class="card">
+      <h1>All Lists</h1>
+      <div>
+        <strong>Search: </strong>
+        <input style="width: 60%" type="text" v-model="searchTerm" placeholder="Search..." />
       </div>
-    </section>
-  </template>
+
+      <table class="table">
+        <tbody>
+          <tr v-for="(list, index) in filteredRows" :key="index">
+            <td>{{ list.displayName }}</td>
+            <td><router-link :to="'/game/' + list.id">Play</router-link></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</template>
     
-  <script>
-  // import SaveConfirmation from './SaveConfirmation.vue'
-  // import { loadPeopleList, loadListDisplayName, saveList, } from '../../util.js'
-  
-  export default {
-    data() {
-      return {
-        state: "edit", // edit | saved
-        lists: [{}]
-        people: [],
-        newListId: this.whichList,
-      };
+<script>
+import { loadAllLists, } from '../../util.js'
+
+export default {
+  data() {
+    return {
+      lists: [],
+      searchTerm: "",
+    };
+  },
+  computed: {
+    filteredRows() {
+      return this.lists.filter(row => {
+        return Object.values(row).some(val =>
+          String(val).toLowerCase().includes(this.searchTerm.toLowerCase())
+        );
+      });
     },
-    methods: {
-      async clickSaveList() {
-        this.newListId = await saveList(this.whichList, this.people, this.listDisplayName);
-        this.state = "saved";
-      },
-      addPerson() {
-        this.people.push({ name: '', about: '', faceUrl: '' });
-      },
-      removePerson(index) {
-        this.people.splice(index, 1)
-      },
-      continueEditing() {
-        this.state = "edit";
-      }
-    },
-    async mounted() {
-      if (this.whichList) {
-        this.people = await loadPeopleList(this.whichList);
-        this.listDisplayName = await loadListDisplayName(this.whichList);
-      } else {
-        console.log("Will be creating a new list")
-      }
-    }
-  };
-  </script>
+  },
+  async mounted() {
+    this.lists = await loadAllLists();
+    console.log(this.lists);
+    console.log(this.lists[2].displayName);
+  }
+};
+</script>
     
-  <style scoped>
-  .image-container {
-    position: relative;
-    overflow: hidden;
-    max-height: 20rem;
-    margin: 1rem;
-  }
-  
-  table {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  td {
-    text-align: right;
-  }
-  </style>
+<style scoped>
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.table thead {
+  background-color: #004777;
+  color: white;
+}
+
+.table tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+.table tbody tr:nth-of-type(odd) {
+  background-color: white;
+}
+
+.table tbody tr:nth-of-type(even) {
+  background-color: #F1F1F3;
+}
+
+.table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #BEBEC2;
+}
+</style>

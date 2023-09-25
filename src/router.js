@@ -1,11 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import TheGame from '@/components/game/TheGame.vue'
 import ListCreator from '@/components/lists/ListCreator.vue';
+import AllLists from '@/components/lists/AllLists.vue'
 
 const routes = [
   {
     path: '/create',
     component: ListCreator,
+  },
+  {
+    path: '/lists',
+    component: AllLists,
   },
   {
     path: '/edit/:initWhichList',
