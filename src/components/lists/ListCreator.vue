@@ -2,9 +2,9 @@
   <section>
     <save-confirmation v-if="state == 'saved'" :list-display-name="listDisplayName" :whichList="whichList"
       @continue-editing="continueEditing"></save-confirmation>
-    <div class="card" v-else :key="whichList">
+    <div class="card" v-else>
       <h1>Create List</h1>
-      <form @submit.prevent="clickSaveList">
+      <form @submit.prevent="validateAndSaveList">
         <div>
           <strong>List Title: </strong>
           <input type="text" v-model.trim="listDisplayName" required />
@@ -60,12 +60,30 @@ export default {
       people: [],
       whichList: this.initWhichList, // could be null if creating a new list from scratch
       warningMessage: "",
-      faceUrlsValid: false,
-      validImage: true,
     };
   },
+  watch: {
+    $route(to) {
+      if (to.path === '/create') {
+        this.reset();
+      }
+    }
+  },
   methods: {
-    async clickSaveList() {
+    async reset() {
+      this.state = "edit";
+      this.listDisplayName = "";
+      this.people = [];
+      this.whichList = this.initWhichList;
+      this.warningMessage = "";
+      if (this.whichList) {
+        this.people = await loadPeopleList(this.whichList);
+        this.listDisplayName = await loadListDisplayName(this.whichList);
+      } else {
+        console.log("Will be creating a new list")
+      }
+    },
+    async validateAndSaveList() {
       if (this.people.length == 0) {
         this.warningMessage = "Add at least one person to your list!";
         return;
@@ -75,10 +93,13 @@ export default {
         this.warningMessage = "One of your image urls is not valid!"
         return;
       }
+
       // all validation done
       this.warningMessage = "";
       this.whichList = await saveList(this.whichList, this.people, this.listDisplayName);
       this.state = "saved";
+
+      this.$router.push('/edit/' + this.whichList);
     },
     validateImageURL(url) {
       return new Promise((resolve) => {
@@ -105,12 +126,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.whichList) {
-      this.people = await loadPeopleList(this.whichList);
-      this.listDisplayName = await loadListDisplayName(this.whichList);
-    } else {
-      console.log("Will be creating a new list")
-    }
+    await this.reset();
   }
 };
 </script>
