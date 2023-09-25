@@ -33,8 +33,8 @@
           <button @click="removePerson(index)">Remove</button>
           <hr>
         </div>
-        <button @click="addPerson">Add another</button>
-        <button class="throbbing" type="submit">Save List</button>
+        <button :class="{ 'throbbing': addShouldThrob}"  @click="addPerson">Add another</button>
+        <button :class="{ 'throbbing': saveShouldThrob}" type="submit">Save List</button>
         <div v-if="this.warningMessage" class="warning-message">
           <span class="warning-icon">⚠️</span>
           {{ warningMessage }}
@@ -61,6 +61,14 @@ export default {
       whichList: this.initWhichList, // could be null if creating a new list from scratch
       warningMessage: "",
     };
+  },
+  computed: {
+    saveShouldThrob() {
+      return this.people.length > 0;
+    },
+    addShouldThrob() {
+      return this.people.length == 0;
+    }
   },
   watch: {
     $route(to) {
