@@ -8,7 +8,7 @@ const routes = [
     component: ListCreator,
   },
   {
-    path: '/edit/:whichList',
+    path: '/edit/:initWhichList',
     component: ListCreator,
     props: true,
   },

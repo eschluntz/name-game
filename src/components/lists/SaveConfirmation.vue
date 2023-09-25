@@ -2,8 +2,8 @@
   <section>
     <div class="card">
       <h1>{{ listDisplayName }} Saved!</h1>
-      <router-link :to="'/game/' + newListId"><button class="throbbing">Play Your List</button></router-link>
-      <button @click="saveToClipboard('localhost:8080/game/' + newListId)">{{ buttonText }}</button>
+      <router-link :to="'/game/' + whichList"><button class="throbbing">Play Your List</button></router-link>
+      <button @click="saveToClipboard('localhost:8080/game/' + whichList)">{{ buttonText }}</button>
       <button @click="continueEditing">Continue Editing</button>
     </div>
   </section>
@@ -13,7 +13,7 @@
 const defaultCopyText = 'Copy List URL'
 
 export default {
-  props: ['listDisplayName', 'newListId'],
+  props: ['listDisplayName', 'whichList'],
   emits: ['continue-editing'],
   data() {
     return {
