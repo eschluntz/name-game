@@ -2,7 +2,7 @@
   <start-menu v-if="gameState == 'start'" @start-game="startGame">
   </start-menu>
   <div v-else-if="gameState == 'play'">
-    <face-card :person="person" @next-person="nextPerson" :key="roundCountKey">
+    <face-card :person="person" :decoys="decoys" @next-person="nextPerson" :key="roundCountKey">
     </face-card>
     <the-score :score="score" :index="index" :total="people.length">
     </the-score>
@@ -45,10 +45,30 @@ export default {
   computed: {
     person() {
       return this.people[this.index];
-    }
+    },
+    decoys() {
+      // pick 3 random other names from the list
+      const count = 3;
+      if (this.people.length < count + 1) {
+        throw new Error("Not enough people to generate decoys!");
+      }
+
+      const indexes = new Set([this.index]);
+
+      while (indexes.size <= count) {
+        const randomIndex = Math.floor(Math.random() * this.people.length);
+        if (!indexes.has(randomIndex)) {
+          indexes.add(randomIndex);
+        }
+      }
+
+      indexes.delete(this.index);
+      return [...indexes].map(index => this.people[index].name);
+    },
   },
   watch: {
-    $route() {
+    async whichList() {
+      this.originalLoadedPeople = await loadPeopleList(this.whichList);
       this.playAgain();
       this.gameState = "start";
     }

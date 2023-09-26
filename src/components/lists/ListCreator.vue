@@ -64,10 +64,10 @@ export default {
   },
   computed: {
     saveShouldThrob() {
-      return this.people.length > 0;
+      return this.people.length >= 4;
     },
     addShouldThrob() {
-      return this.people.length == 0;
+      return this.people.length < 4;
     }
   },
   watch: {
@@ -93,7 +93,7 @@ export default {
     },
     async validateAndSaveList() {
       if (this.people.length == 0) {
-        this.warningMessage = "Add at least one person to your list!";
+        this.warningMessage = "Add at least 4 people to your list!";
         return;
       }
       const imgResults = await Promise.all(this.people.map(person => this.validateImageURL(person.faceUrl)));
