@@ -63,7 +63,7 @@ export default {
         this.endGame(true);
       } else {
         this.flashCardClass("fail-flash");
-        this.remainingTime -= GUESSTIME / 4;
+        this.remainingTime -= GUESSTIME / 3;
         this.revealedAbout = "HINT: " + this.person.about;
       }
     },
