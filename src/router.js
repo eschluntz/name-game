@@ -27,11 +27,6 @@ const routes = [
     path: '/',
     redirect: '/game/ceos'
   },
-  {                                                                                                                                                                                   
-    path: '/:pathMatch(.*)*',                                                                                                                                                         
-    name: 'error404',                                                                                                                                                                                      
-    component: Error404                                                                                                                                                               
-  }
 ];
 
 const router = createRouter({
