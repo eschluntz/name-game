@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import TheGame from '@/components/game/TheGame.vue'
 import ListCreator from '@/components/lists/ListCreator.vue';
 import AllLists from '@/components/lists/AllLists.vue'
+import Error404 from '@/components/Error404.vue'
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
     path: '/',
     redirect: '/game/ceos'
   },
+  {                                                                                                                                                                                   
+    path: '/:pathMatch(.*)*',                                                                                                                                                         
+    name: 'error404',                                                                                                                                                                                      
+    component: Error404                                                                                                                                                               
+  }
 ];
 
 const router = createRouter({
