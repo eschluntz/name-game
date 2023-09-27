@@ -47,6 +47,7 @@
 <script>
 import SaveConfirmation from './SaveConfirmation.vue'
 import { loadPeopleList, loadListDisplayName, saveList, } from '../../util.js'
+const MIN_PEOPLE = 4;
 
 export default {
   components: {
@@ -64,10 +65,10 @@ export default {
   },
   computed: {
     saveShouldThrob() {
-      return this.people.length >= 4;
+      return this.people.length >= MIN_PEOPLE;
     },
     addShouldThrob() {
-      return this.people.length < 4;
+      return this.people.length < MIN_PEOPLE;
     }
   },
   watch: {
@@ -92,8 +93,8 @@ export default {
       }
     },
     async validateAndSaveList() {
-      if (this.people.length == 0) {
-        this.warningMessage = "Add at least 4 people to your list!";
+      if (this.people.length < MIN_PEOPLE) {
+        this.warningMessage = "Add at least " + MIN_PEOPLE + " people to your list!";
         return;
       }
       const imgResults = await Promise.all(this.people.map(person => this.validateImageURL(person.faceUrl)));
