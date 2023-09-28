@@ -11,7 +11,7 @@
         <tbody>
           <tr v-for="(list, index) in filteredRows" :key="index">
             <td>{{ list.displayName }}</td>
-            <td><router-link :to="'/game/' + list.id">Play</router-link></td>
+            <td><router-link :to="'/game/' + list.id"><button>Play</button></router-link></td>
           </tr>
         </tbody>
       </table>

@@ -4,16 +4,16 @@
     <table>
       <tr>
         <td>
-          <router-link to="/game/vcs">Top VCs</router-link>
+          <router-link to="/game/vcs"><button>Top VCs</button></router-link>
         </td>
         <td>
-          <router-link to="/game/ceos">Top Tech CEOs</router-link>
+          <router-link to="/game/ceos"><button>Top Tech CEOs</button></router-link>
         </td>
         <td>
-          <router-link to="/lists">All Lists</router-link>
+          <router-link to="/lists"><button>All Lists</button></router-link>
         </td>
         <td>
-          <router-link to="/create">Create Your Own</router-link>
+          <router-link to="/create"><button>Create Your Own</button></router-link>
         </td>
       </tr>
     </table>
@@ -25,6 +25,28 @@ export default {}
 </script>
 
 <style scoped>
+
+button {
+  font: inherit;
+  border: 1px solid #3DBCE7;
+  background-color: #3DBCE7;
+  color: white;
+  /* padding: 0.5rem 1rem; */
+  padding: auto;
+  /* width: 25%; */
+  cursor: pointer;
+  border-radius: .3rem;
+  margin-inline: .1rem;
+  /* min-width: none; */
+
+}
+
+button:hover,
+button:active {
+  background-color: #71dcff;
+  border-color: #71dcff;
+}
+
 section {
   background-color: #004777;
   text-align: center;
@@ -34,6 +56,8 @@ section {
 table {
   margin-left: auto;
   margin-right: auto;
+  max-width: 40rem;
+  width: 100%;
 }
 
 .title {

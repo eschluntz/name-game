@@ -2,8 +2,8 @@
   <section>
     <div class="card">
       <h1>{{ listDisplayName }} Saved!</h1>
-      <router-link :to="'/game/' + whichList" class="throbbing">Play Your List</router-link>
-      <button @click="saveToClipboard('localhost:8080/game/' + whichList)">{{ buttonText }}</button>
+      <router-link :to="'/game/' + whichList" class="throbbing"><button>Play Your List</button></router-link>
+      <button @click="saveToClipboard('names.erikschluntz.com/game/' + whichList)">{{ buttonText }}</button>
       <button @click="continueEditing">Continue Editing</button>
     </div>
   </section>

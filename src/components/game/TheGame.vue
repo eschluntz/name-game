@@ -131,29 +131,12 @@ div .card {
   text-align: center;
 }
 
-a {
-  font: inherit;
-  border: 1px solid #3DBCE7;
-  background-color: #3DBCE7;
-  color: white;
-  padding: 0.5rem 2rem;
-  cursor: pointer;
-  border-radius: .3rem;
-  text-decoration: none;
-}
-
-a:hover,
-a.router-link-active {
-  background-color: #71dcff;
-  border-color: #71dcff;
-}
-
 button {
   font: inherit;
   border: 1px solid #3DBCE7;
   background-color: #3DBCE7;
   color: white;
-  padding: 0.5rem 2rem;
+  /* padding: 0.5rem 2rem; */
   cursor: pointer;
   border-radius: .3rem;
   margin-inline: .3rem;
