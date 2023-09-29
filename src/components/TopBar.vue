@@ -27,24 +27,8 @@ export default {}
 <style scoped>
 
 button {
-  font: inherit;
-  border: 1px solid #3DBCE7;
-  background-color: #3DBCE7;
-  color: white;
-  /* padding: 0.5rem 1rem; */
-  padding: auto;
-  /* width: 25%; */
-  cursor: pointer;
-  border-radius: .3rem;
-  margin-inline: .1rem;
-  /* min-width: none; */
+  width: 100%;
 
-}
-
-button:hover,
-button:active {
-  background-color: #71dcff;
-  border-color: #71dcff;
 }
 
 section {

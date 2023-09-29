@@ -33,8 +33,8 @@
           <button @click="removePerson(index)">Remove</button>
           <hr>
         </div>
-        <button :class="{ 'throbbing': addShouldThrob}"  @click="addPerson">Add another</button>
-        <button :class="{ 'throbbing': saveShouldThrob}" type="submit">Save List</button>
+        <button :class="{ 'throbbing': addShouldThrob }" @click="addPerson">Add another</button>
+        <button :class="{ 'throbbing': saveShouldThrob }" type="submit">Save List</button>
         <div v-if="this.warningMessage" class="warning-message">
           <span class="warning-icon">⚠️</span>
           {{ warningMessage }}
@@ -82,7 +82,7 @@ export default {
     async reset() {
       this.state = "edit";
       this.listDisplayName = "";
-      this.people = [];
+      this.people = [{ name: '', about: '', faceUrl: '' }];
       this.whichList = this.initWhichList;
       this.warningMessage = "";
       if (this.whichList) {
@@ -105,10 +105,19 @@ export default {
 
       // all validation done
       this.warningMessage = "";
-      this.whichList = await saveList(this.whichList, this.people, this.listDisplayName);
-      this.state = "saved";
+      saveList(this.whichList, this.people, this.listDisplayName)
+        .then(result => {
+          this.whichList = result;
+          this.state = "saved";
+          this.$router.push('/edit/' + this.whichList);
+        })
+        .catch(error => {
+          console.error("Error saving the list:", error);
+          this.warningMessage = "You're not allowed to edit this list";
+          // You can also set some state or take additional actions here if needed.
+        });
 
-      this.$router.push('/edit/' + this.whichList);
+      
     },
     validateImageURL(url) {
       return new Promise((resolve) => {

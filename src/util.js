@@ -26,7 +26,6 @@ export async function loadPeopleList(whichList) {
 export async function loadAllLists() {
   const colRef = collection(db, 'scoreList');
   const querySnap = await getDocs(query(colRef));
-  // console.log("hi")
   return querySnap.docs.map((doc) => {
     return {
       id: doc.id,

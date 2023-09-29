@@ -40,8 +40,6 @@ export default {
   },
   async mounted() {
     this.lists = await loadAllLists();
-    console.log(this.lists);
-    console.log(this.lists[2].displayName);
   }
 };
 </script>
