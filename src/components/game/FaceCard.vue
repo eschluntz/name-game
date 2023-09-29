@@ -2,7 +2,8 @@
   <section>
     <div class="card" :class="flashClass">
       <div class="image-container">
-        <img :src="person.faceUrl" />
+        <div v-if="!imageLoaded">Loading...</div>
+        <img @load="onImageLoaded" :src="person.faceUrl" />
       </div>
       <div style="height: 1.5rem">{{ revealedAbout }}</div>
       <div class="button-container">
@@ -38,6 +39,7 @@ export default {
       flashClass: "",
       revealedAbout: "",
       possibleAnswers: shuffle([this.person.name, ...this.decoys]),
+      imageLoaded: false,
     };
   },
   computed: {
@@ -46,6 +48,9 @@ export default {
     },
   },
   methods: {
+    onImageLoaded() {
+      this.imageLoaded = true;
+    },
     answerClass(answer) {
       if (this.active) {
         return "answer-button"
@@ -75,7 +80,7 @@ export default {
     },
 
     timePassing() { // called by interval timer
-      if (!this.active) {
+      if (!this.active || !this.imageLoaded) {
         return
       }
 
@@ -134,6 +139,7 @@ export default {
 </script>
   
 <style scoped>
+
 .success-flash {
   background-color: rgb(138, 255, 144);
   transition: 'background-color 0.15s ease';
