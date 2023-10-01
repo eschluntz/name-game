@@ -136,6 +136,7 @@ button {
   border: 1px solid #3DBCE7;
   background-color: #3DBCE7;
   color: white;
+  padding: 0.5rem 2rem;
   cursor: pointer;
   border-radius: .3rem;
   margin-inline: .3rem;
