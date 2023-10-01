@@ -5,7 +5,7 @@
         <div v-if="!imageLoaded">Loading...</div>
         <img @load="onImageLoaded" :src="person.faceUrl" />
       </div>
-      <div style="height: 1.5rem">{{ revealedAbout }}</div>
+      <div style="min-height: 1.5rem">{{ revealedAbout }}</div>
       <div class="button-container">
         <button v-for="(answer, index) in possibleAnswers" @click="clickAnswer(answer)" :class="answerClass(answer)"
           :key="index">
